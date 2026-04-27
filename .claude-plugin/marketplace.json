@@ -1,0 +1,14 @@
+{
+  "name": "zeus-marketplace",
+  "owner": {
+    "name": "rainhan"
+  },
+  "plugins": [
+    {
+      "name": "zeus",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Full-lifecycle harness for Claude Code agents — kickoff, planning, execution, verification, handoff."
+    }
+  ]
+}

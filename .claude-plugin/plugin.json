@@ -1,0 +1,17 @@
+{
+  "name": "zeus",
+  "displayName": "Zeus — Harness Engineering Lifecycle",
+  "version": "0.1.0",
+  "description": "Full-lifecycle harness for Claude Code agents — kickoff, planning, execution, verification, handoff. Grounded in the harness-engineering 5-layer defense model and the 7-gate completion cascade.",
+  "author": {
+    "name": "rainhan"
+  },
+  "license": "MIT",
+  "keywords": [
+    "harness-engineering",
+    "lifecycle",
+    "agent",
+    "claude-code",
+    "skills"
+  ]
+}
