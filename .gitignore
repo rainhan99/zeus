@@ -9,3 +9,9 @@ __pycache__/
 *.pyc
 .env
 .env.local
+
+# Override global ~/.gitignore_global which excludes these — for zeus they are
+# deliverables (AGENTS.md is the plugin's own dev contract; future CLAUDE.md
+# may ship as agent-specific guidance).
+!AGENTS.md
+!CLAUDE.md
