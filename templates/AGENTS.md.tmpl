@@ -1,0 +1,43 @@
+# AGENTS.md
+
+> This file governs how AI agents work in this project. It is the project's binding contract for what "done" means and how to get there. Agents must read it on every session start.
+
+## Tech Stack
+
+<!-- Replace with this project's stack: language, framework, runtime versions, any non-obvious tooling. Include version constraints (e.g., "Python 3.12+", "Node 20.x"), not just names. -->
+
+## Conventions
+
+<!-- Code style, naming, branch naming, commit message format. Anything an experienced contributor would notice but a newcomer would miss. -->
+
+## Commands
+
+<!-- Concrete shell commands an agent should know. Each line is a command and what it does. -->
+
+- `<install>` — install dependencies
+- `<build>` — build the project
+- `<test>` — run the test suite
+- `<lint>` — run the linter
+- `<run>` — run the application locally
+
+## Definition of Done
+
+<!--
+This section is REQUIRED. Each item must be a command-verifiable condition (something that returns exit code 0 on success). Do not write narrative completion descriptions like "the feature works" — those are not gates.
+
+Example items:
+  - `pytest` exits 0 with no skipped tests
+  - `mypy --strict src/` exits 0
+  - `ruff check .` exits 0
+  - `coverage run -m pytest && coverage report --fail-under=80` exits 0
+-->
+
+- [ ] <add a command-verifiable condition here>
+- [ ] <add another>
+
+## Invariants
+
+<!-- Things that must remain true regardless of what changes — security, public API stability, data integrity. -->
+
+- No secrets in the repository.
+- <project-specific invariant>
