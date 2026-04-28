@@ -18,7 +18,7 @@ Defended by: `kickoff-definition-of-done`, `kickoff-feature-list`, `brainstormin
 
 The agent does not have access to the project-specific knowledge a human teammate would have. Symptoms: uses wrong library version, ignores existing patterns, re-implements a utility that already exists.
 
-Defended by: `kickoff-agents-md`, `session-init`, claude-mem detection adapter.
+Defended by: `kickoff-agents-md`, `session-init`, `memory-management`.
 
 ### Layer 3: Execution environment
 
@@ -36,7 +36,7 @@ Defended by: `verification-before-completion`, `e2e-gate`, `test-driven-developm
 
 The agent loses or never had the state needed to continue work that spans multiple turns or sessions. Symptoms: redoing solved problems, forgetting decisions, abandoning long tasks before completion ("context anxiety"), inability to resume after a crash.
 
-Defended by: `long-task-continuity`, `session-handoff`, `clean-state`, `observability`, claude-mem detection adapter.
+Defended by: `long-task-continuity`, `session-handoff`, `clean-state`, `observability`, `memory-management`.
 
 ## How a skill picks its layer
 
