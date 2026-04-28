@@ -13,6 +13,14 @@ Zeus is a Claude Code plugin that turns a 12-lecture harness-engineering curricu
 
 ```bash
 # In a Claude Code session:
+/install-plugin https://github.com/rainhan99/zeus
+```
+
+Or install from a local clone:
+
+```bash
+git clone https://github.com/rainhan99/zeus.git
+# In a Claude Code session:
 /install-plugin /path/to/zeus
 ```
 
