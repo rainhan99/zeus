@@ -10,6 +10,18 @@
 
 <!-- Code style, naming, branch naming, commit message format. Anything an experienced contributor would notice but a newcomer would miss. -->
 
+### File size conventions
+
+| Scenario                         | Recommended    | Notes                                          |
+| -------------------------------- | -------------- | ---------------------------------------------- |
+| Utility / Helper                 | 50–150 lines   | Pure functions, single responsibility          |
+| Service / Controller (domain)    | 150–300 lines  | One class / module per domain concept          |
+| Complex business logic           | 300–500 lines  | Acceptable; review for split                   |
+| Config / Routing / Type defs     | (relaxed)      | High volume, low complexity                    |
+| Test files                       | (relaxed)      | Long is OK; split by feature module when huge  |
+
+These are zeus defaults. Override in this AGENTS.md if your project has different conventions.
+
 ## Commands
 
 <!-- Concrete shell commands an agent should know. Each line is a command and what it does. -->
