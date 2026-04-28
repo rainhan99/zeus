@@ -62,9 +62,9 @@ Every failure attributes to exactly one layer. When a gate stays closed, the age
 
 When the agent enters a working directory:
 
-1. **Read `AGENTS.md` at the project root** if present. Treat its `## Definition of Done` section as the binding completion contract for this project. The agent does not get to rewrite or add exceptions to DoD during execution.
+1. **Read project contract (fallback chain).** Try `AGENTS.md` first. If absent, fall back to `CLAUDE.md` and map its content to zeus concepts (commands, conventions, DoD candidates). If neither exists, suggest running `zeus:kickoff-agents-md`. When falling back to CLAUDE.md, zeus plugin rules still apply on top — CLAUDE.md provides project context, zeus provides the lifecycle discipline.
 2. **Load cross-session memory.** Run `zeus:session-init` to load `.zeus/memory/` — the self-contained project memory system. This surfaces all lessons (user corrections), the latest handoff memo, and architecture decisions within token budget. No external MCP dependency required.
-3. **No `AGENTS.md` yet?** Run `zeus:kickoff-agents-md`. It will hand off to `zeus:kickoff-definition-of-done`, which hands off to `zeus:kickoff-feature-list`. Each can also be re-run independently to amend its artifact when the project evolves. The plugin will not let work proceed past the planning phase without a populated AGENTS.md and DoD.
+3. **No `AGENTS.md` yet?** Run `zeus:kickoff-agents-md`. It will read `CLAUDE.md` as an input signal (if present) to pre-fill fields, then hand off to `zeus:kickoff-definition-of-done`, which hands off to `zeus:kickoff-feature-list`. Each can also be re-run independently to amend its artifact when the project evolves. The plugin will not let work proceed past the planning phase without a populated AGENTS.md and DoD — but if the user declines kickoff, CLAUDE.md fallback keeps the session functional.
 
 ## Default behavior
 

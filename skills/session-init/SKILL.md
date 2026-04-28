@@ -15,7 +15,19 @@ L06 argued that initialization needs its own phase because agents that skip it w
 
 ## Process flow
 
-1. **READ PROJECT CONTRACT** — Read `AGENTS.md` at the project root. Treat its `## Definition of Done` as the binding completion contract. If no `AGENTS.md` exists, note this and suggest running `zeus:kickoff-agents-md`.
+1. **READ PROJECT CONTRACT** — Follow the fallback chain to find the project's binding contract:
+
+   | Priority | File | Behavior |
+   |----------|------|----------|
+   | 1st | `AGENTS.md` | Full zeus contract — treat `## Definition of Done` as binding. Best case. |
+   | 2nd | `CLAUDE.md` | Partial contract — extract tech stack, conventions, and commands. Zeus plugin rules apply on top. Suggest running `zeus:kickoff-agents-md` to upgrade to a full AGENTS.md when convenient, but do not block work. |
+   | 3rd | Neither exists | Suggest running `zeus:kickoff-agents-md`. If the user declines, proceed with zeus plugin rules only (no project-specific contract). Log a lesson: "Project has no AGENTS.md or CLAUDE.md — conventions are unanchored." |
+
+   When falling back to CLAUDE.md, the agent reads it and maps its content to zeus concepts:
+   - Any "commands" or "scripts" sections → Commands (used by G3/G4 verification).
+   - Any "conventions" or "rules" sections → Conventions (used by code review).
+   - Any "testing" or "lint" sections → DoD candidates.
+   - Anything not mappable → treat as general context, still valuable.
 
 2. **READ FEATURES** — Read `FEATURES.md` if present. This is the feature inventory from `zeus:kickoff-feature-list`.
 
@@ -42,7 +54,9 @@ L06 argued that initialization needs its own phase because agents that skip it w
 
 ```dot
 digraph session_init {
-  agents_md [label="1. READ\nAGENTS.md", shape=box];
+  agents_md [label="1a. READ\nAGENTS.md?", shape=diamond];
+  claude_md [label="1b. Fallback\nCLAUDE.md?", shape=diamond];
+  suggest_kickoff [label="1c. Suggest\nkickoff-agents-md", shape=box];
   features [label="2. READ\nFEATURES.md", shape=box];
   detect [label="3. DETECT\n.zeus/memory/?", shape=diamond];
   create_mem [label="Create directory\ntree + index.md", shape=box];
@@ -52,7 +66,12 @@ digraph session_init {
   surface [label="7. SURFACE\nstructured context", shape=box];
   ready [label="8. READY", shape=doublecircle];
 
-  agents_md -> features -> detect;
+  agents_md -> features [label="found"];
+  agents_md -> claude_md [label="missing"];
+  claude_md -> features [label="found\n(partial contract)"];
+  claude_md -> suggest_kickoff [label="missing"];
+  suggest_kickoff -> features;
+  features -> detect;
   detect -> create_mem [label="missing"];
   detect -> lessons [label="exists"];
   create_mem -> lessons;
@@ -115,7 +134,8 @@ These are not suggestions. They are corrections the user has already made. Viola
 
 ## Verification checklist
 
-- [ ] `AGENTS.md` read (or absence noted with suggestion to create).
+- [ ] `AGENTS.md` read, or `CLAUDE.md` fallback used, or absence noted with suggestion to create.
+- [ ] When using CLAUDE.md fallback, content mapped to zeus concepts (commands, conventions, DoD candidates).
 - [ ] `FEATURES.md` read if present.
 - [ ] `.zeus/memory/` exists (created if first session).
 - [ ] All lessons loaded in full.

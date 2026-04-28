@@ -67,6 +67,7 @@ digraph kickoff_agents_md {
 | `.github/workflows/*.yml`                                                                 | Commands (CI source of truth); DoD candidates                              |
 | `.tool-versions`, `.nvmrc`, `.python-version`, `.ruby-version`                            | Tech Stack: pinned runtime versions (must appear verbatim)                |
 | `README.md`                                                                               | One-sentence project description; pull-quote                               |
+| `CLAUDE.md`                                                                               | Existing agent instructions — tech stack, conventions, commands, rules. Highest-value signal: if CLAUDE.md exists, extract and migrate its content into AGENTS.md sections rather than re-asking the user. |
 | `.editorconfig`, `.prettierrc`, `pyproject.toml [tool.ruff]`, `pyproject.toml [tool.black]` | Conventions: code style                                                    |
 | `git log` (last 20 commits)                                                               | Conventions: branch + commit format inferred from history                  |
 
