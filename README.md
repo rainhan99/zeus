@@ -12,16 +12,18 @@ Zeus is a Claude Code plugin that turns a 12-lecture harness-engineering curricu
 ## Install
 
 ```bash
-# In a Claude Code session:
-/install-plugin https://github.com/rainhan99/zeus
+# In a Claude Code session — add the marketplace source, then install:
+/plugin marketplace add rainhan99/zeus
+/plugin install zeus@rainhan99-zeus
 ```
 
-Or install from a local clone:
+Or from a local clone:
 
 ```bash
 git clone https://github.com/rainhan99/zeus.git
 # In a Claude Code session:
-/install-plugin /path/to/zeus
+/plugin marketplace add ./zeus
+/plugin install zeus@zeus
 ```
 
 After install, every new conversation auto-loads `using-zeus` via the SessionStart hook, anchoring the 7-gate cascade and 5-layer model in working memory.
