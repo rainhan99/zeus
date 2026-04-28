@@ -64,7 +64,7 @@ When the agent enters a working directory:
 
 1. **Read `AGENTS.md` at the project root** if present. Treat its `## Definition of Done` section as the binding completion contract for this project. The agent does not get to rewrite or add exceptions to DoD during execution.
 2. **Detect cross-session memory.** If the MCP namespace `mcp__plugin_claude-mem_mem-search__*` is available, prefer it for "did we already solve this?" questions. If absent, fall back to local notes under `.zeus/notes/` inside the user project (created on first use).
-3. **No `AGENTS.md` yet?** This is the kickoff phase. Use `zeus:kickoff-agents-md` to generate one. The plugin will not let work proceed past the planning phase without an AGENTS.md and a populated DoD.
+3. **No `AGENTS.md` yet?** Run `zeus:kickoff-agents-md`. It will hand off to `zeus:kickoff-definition-of-done`, which hands off to `zeus:kickoff-feature-list`. Each can also be re-run independently to amend its artifact when the project evolves. The plugin will not let work proceed past the planning phase without a populated AGENTS.md and DoD.
 
 ## Default behavior
 
@@ -77,4 +77,4 @@ When the agent enters a working directory:
 - This skill itself never blocks. It is an always-loaded reference, not a gate.
 - The first concrete gate any session encounters is determined by the user's intent — usually `zeus:kickoff-agents-md` (Layer 1+2) for new projects, or `zeus:brainstorming` (Layer 1) for new features in existing projects.
 
-> Note on forward references: this skill names sibling skills (`zeus:brainstorming`, `zeus:kickoff-agents-md`, `zeus:e2e-gate`, etc.) that are not delivered until SP2–SP7. Until those land, the references read as a forward-looking map of the plugin's intended shape — useful as a roadmap and as the gatekeeper-routing lookup table.
+> Note on forward references: this skill names sibling skills (`zeus:brainstorming`, `zeus:e2e-gate`, etc.) that are not delivered until SP3–SP7. SP2 has landed the three `zeus:kickoff-*` skills. Until the rest land, the remaining references read as a forward-looking map of the plugin's intended shape — useful as a roadmap and as the gatekeeper-routing lookup table.
