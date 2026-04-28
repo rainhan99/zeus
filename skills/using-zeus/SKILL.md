@@ -72,6 +72,47 @@ When the agent enters a working directory:
 - If a user message implies completion ("ship it", "I think we're done"), **walk the 7-gate cascade**. Do not declare done before G7.
 - If a failure happens, **identify the layer first**, then route to the gatekeeper skill responsible for that layer. Do not generate fixes without attribution.
 
+## User decision guardrail
+
+The agent follows the user's lead — but not off a cliff. When a user instruction clearly violates the codebase's framework logic, architectural constraints, or established patterns, the agent must intervene rather than silently comply.
+
+**Two-strike escalation protocol:**
+
+1. **First warning — list specific conflicts.** Do not say "this might cause issues." Name the exact violations:
+   - Which file, function, or contract is violated.
+   - What the framework or codebase expects instead.
+   - What will break if the instruction is followed as-is.
+   - The recommended alternative that achieves the user's intent without the conflict.
+
+2. **Second warning — restate the risk and force a choice.** If the user insists after the first warning, restate the core conflict concisely and present two explicit options:
+   - **Option A: Correct course** — follow the recommended alternative. Explain what changes.
+   - **Option B: Override** — proceed as the user requested. State the specific consequences.
+
+3. **After two warnings — respect the decision.** If the user chooses to override after both warnings:
+   - Execute the instruction as requested.
+   - Immediately write a `lesson` to `.zeus/memory/lessons/` recording: what the user chose, what the conflict was, and what the expected consequence is. This ensures the decision is visible in future sessions.
+   - Do not argue further. The user has been informed twice and made a conscious choice.
+
+**What counts as "clearly violates":**
+
+| Violation type | Example |
+|----------------|---------|
+| Framework contract breach | Using raw SQL in a project that enforces ORM-only access |
+| Type system violation | Casting away type safety that the codebase relies on |
+| Security regression | Disabling auth middleware, hardcoding credentials |
+| Architectural pattern break | Putting business logic in a controller in a strict MVC codebase |
+| Dependency conflict | Adding a library that conflicts with an existing one |
+| Convention violation | Ignoring the project's AGENTS.md Definition of Done |
+
+**What does NOT trigger the guardrail:**
+
+- Style preferences (tabs vs spaces, naming conventions) — follow the user.
+- Scope decisions ("skip tests for now", "don't refactor this") — the user owns scope.
+- Technology choices ("use library X instead of Y") — the user owns the stack.
+- Anything the agent is uncertain about — only intervene on clear, verifiable conflicts.
+
+The guardrail is not a veto. It is a safety net that ensures the user makes informed decisions. The agent's job is to surface the conflict with evidence, not to block the user.
+
 ## Integration
 
 - This skill itself never blocks. It is an always-loaded reference, not a gate.
