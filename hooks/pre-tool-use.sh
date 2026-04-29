@@ -1,36 +1,31 @@
 #!/usr/bin/env bash
-# Zeus PreToolUse hook.
-# Fires before Edit, Write, and NotebookEdit tool calls.
+# Zeus PreToolUse hook — hard enforcement via exit code 2.
+# Fires before Edit, Write, and NotebookEdit.
 #
-# Enforcement logic:
-#   1. Writes to .zeus/ directory → always allow (specs, state, memory)
-#   2. .zeus/state/spec-approved exists → allow (brainstorming done)
-#   3. Otherwise → deny with reason (forces brainstorming first)
-#
-# Uses permissionDecision:"deny" for hard enforcement that auto mode
-# cannot override. The model sees permissionDecisionReason and is
-# forced to invoke zeus:brainstorming before writing any code.
+# Logic:
+#   1. Writes to .zeus/ → always allow
+#   2. .zeus/state/brainstorming-active exists → allow (skill is running)
+#   3. .zeus/state/spec-approved exists → allow (spec approved)
+#   4. Otherwise → exit 2 (block, stderr shown to model)
 
 set -u
 
-TOOL_INPUT="$(cat /dev/stdin 2>/dev/null || echo '{}')"
+INPUT="$(cat 2>/dev/null || echo '{}')"
 
-FILE_PATH="$(printf '%s' "$TOOL_INPUT" | jq -r '.tool_input.file_path // .tool_input.path // ""' 2>/dev/null)"
+FILE_PATH="$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/null)"
+CWD="$(printf '%s' "$INPUT" | jq -r '.cwd // ""' 2>/dev/null)"
+PROJECT="${CWD:-${CLAUDE_PROJECT_DIR:-.}}"
 
-if printf '%s' "$FILE_PATH" | grep -q '\.zeus/' 2>/dev/null; then
-  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}\n'
-  exit 0
-fi
+# Always allow writes to .zeus/ and docs/specs/
+case "$FILE_PATH" in
+  */.zeus/*|*.zeus/*) exit 0 ;;
+  */docs/specs/*) exit 0 ;;
+esac
 
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
-MARKER="$PROJECT_DIR/.zeus/state/spec-approved"
+# Allow if brainstorming is active or spec is approved
+[ -f "$PROJECT/.zeus/state/brainstorming-active" ] && exit 0
+[ -f "$PROJECT/.zeus/state/spec-approved" ] && exit 0
 
-if [ -f "$MARKER" ]; then
-  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}\n'
-  exit 0
-fi
-
-REASON="Zeus enforcement: no approved brainstorming spec found. Code changes are blocked until a spec is approved. To unblock, invoke the Skill tool with skill name zeus:brainstorming — this will walk through the design process and produce an approved spec. After approval, code changes will be allowed. This applies in all modes including auto mode."
-
-printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$REASON"
-exit 0
+# Block — stderr is shown to the model
+echo "Zeus: code changes blocked. No approved brainstorming spec found. Invoke the Skill tool with zeus:brainstorming to start the design process and unblock writes." >&2
+exit 2

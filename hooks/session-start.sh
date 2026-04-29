@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 # Zeus SessionStart hook.
-# Reads hooks/bootstrap.md and emits it as additionalContext.
+# 1. Clears stale brainstorming markers so every session starts fresh.
+# 2. Reads hooks/bootstrap.md and emits it as additionalContext.
 # Always exits 0 so a missing file never blocks a session.
 
 set -u
+
+# Clear stale markers — forces brainstorming on each new session
+PROJECT="${CLAUDE_PROJECT_DIR:-.}"
+rm -f "$PROJECT/.zeus/state/spec-approved" "$PROJECT/.zeus/state/brainstorming-active" 2>/dev/null
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BOOTSTRAP_FILE="$SCRIPT_DIR/bootstrap.md"

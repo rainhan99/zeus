@@ -25,7 +25,7 @@ If a downstream skill (writing-plans, executing-plans, etc.) is invoked without 
 
 ### Phase 0 — Anchor (always runs)
 
-0. **Clear previous spec marker.** Remove `.zeus/state/spec-approved` if it exists — a new brainstorming session means the old approval no longer applies. Run: `rm -f .zeus/state/spec-approved`
+0. **Clear previous markers and activate brainstorming.** Run: `mkdir -p .zeus/state && rm -f .zeus/state/spec-approved && echo "active" > .zeus/state/brainstorming-active`
 1. **Read `AGENTS.md`** at the project root. Note the DoD items, conventions, commands, invariants. If the file is missing, abort with: "No AGENTS.md found. Run `zeus:kickoff-agents-md` first to establish the project's binding contract."
 2. **Read `FEATURES.md`** if present. Skip silently if absent.
 3. **Show the user the current 7-gate cascade** so they know what "done" will mean for this work. Tell them: "Once we ship this design, completion will be gated by these seven evidence levels: G1 code → G2 TDD red-green → G3 verification command → G4 DoD satisfied → G5 E2E pipeline → G6 two-stage review → G7 handoff state."
@@ -130,7 +130,7 @@ Both must be complete (not stubs). If the agent cannot generate two genuinely di
 2. **Update `FEATURES.md`**: F-NNN status → `in-progress`, `**Spec:**` field → relative link to the spec.
 3. **Self-review**: placeholder scan, internal consistency, scope check, ambiguity. Fix inline.
 4. **User reviews** the spec file. Wait for `approve` or change requests.
-5. **On approval**: write the spec-approved marker so the PreToolUse hook unblocks code changes. Run: `mkdir -p .zeus/state && echo "<spec-file-path>" > .zeus/state/spec-approved`
+5. **On approval**: write the spec-approved marker and remove the active marker. Run: `echo "<spec-file-path>" > .zeus/state/spec-approved && rm -f .zeus/state/brainstorming-active`
 6. **Hand off** to `zeus:writing-plans`.
 
 ```dot
