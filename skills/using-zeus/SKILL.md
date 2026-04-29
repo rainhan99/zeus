@@ -69,13 +69,32 @@ When the agent enters a working directory:
 ## Default behavior
 
 <MANDATORY>
-These rules are NON-NEGOTIABLE. They override auto mode, user urgency, and "just do it" instructions. The agent MUST follow them even when the user says "skip planning" or "just code it". Skipping these rules is a Layer 1 failure (task specification unclear).
+These rules are NON-NEGOTIABLE. They apply in ALL permission modes — including auto mode, bypass mode, and any other autonomous execution mode. The agent MUST follow them even when the user says "skip planning" or "just code it". No permission mode grants the right to skip zeus lifecycle discipline. Skipping these rules is a Layer 1 failure (task specification unclear).
 </MANDATORY>
+
+## Critical intervention points
+
+Regardless of permission mode, the agent MUST pause and enforce zeus process at these points. Auto mode and bypass mode grant permission to execute tools without user confirmation — they do NOT grant permission to skip design, verification, or quality gates.
+
+| Intervention point | Trigger | Required action | Cannot be skipped by |
+|--------------------|---------|-----------------|---------------------|
+| **New feature / task** | User requests new code work | Invoke `zeus:brainstorming` before any code | auto mode, bypass mode, "just do it" |
+| **Plan execution start** | Brainstorming spec approved | Invoke `zeus:writing-plans` to produce task plan | auto mode, bypass mode |
+| **Each task completion** | A plan task finishes | Run verification (G3) before moving to next task | auto mode, bypass mode |
+| **All tasks done** | Plan fully executed | Walk G1→G7 cascade, do not declare done early | auto mode, "ship it", "looks good" |
+| **Test failure** | Tests fail | Route to `zeus:systematic-debugging`, not quick-patch | auto mode, bypass mode |
+| **User correction** | User points out a mistake | Write lesson to `.zeus/memory/lessons/` immediately | auto mode, bypass mode |
+| **Session ending** | User leaves or context limit | Produce handoff memo via `zeus:session-handoff` | auto mode, bypass mode |
+
+**How auto/bypass mode interacts with zeus:**
+- Auto/bypass mode means: execute tool calls without asking user for permission.
+- Auto/bypass mode does NOT mean: skip brainstorming, skip verification, skip code review, skip the gate cascade.
+- The agent may proceed autonomously WITHIN each zeus phase (e.g., auto-execute all brainstorming research steps), but it may NOT skip phases entirely.
 
 **RULE 1: DESIGN BEFORE CODE — NO EXCEPTIONS.**
 When a user message implies starting new code work ("implement X", "add Y", "build Z", "I want to create..."), the agent MUST invoke `zeus:brainstorming` BEFORE writing any code. This is not a suggestion. Do not explore the codebase, do not read files, do not write code until brainstorming produces a user-approved spec.
 
-The ONLY exception: the user explicitly references an existing approved spec or plan that covers the requested work.
+The ONLY exception: the user explicitly references an existing approved sr plan that covers the requested work.
 
 If the agent catches itself about to write code without a brainstorming-approved spec → STOP. Invoke brainstorming. Then proceed.
 
@@ -84,6 +103,9 @@ When a user message implies completion ("ship it", "I think we're done", "looks 
 
 **RULE 3: FAILURES ROUTE THROUGH THE 5-LAYER MODEL.**
 When a failure happens, identify which layer is responsible FIRST, then route to the gatekeeper skill for that layer. Do not generate fixes without attribution.
+
+**RULE 4: USER CORRECTIONS ARE PERMANENT.**
+When the user points out a mistake or says "remember this" / "don't do that again", immediately write a lesson to `.zeus/memory/lessons/`. This applies in ALL modes — auto, bypass, or interactive. Lessons are never skipped, never deferred.
 
 ## User decision guardrail
 
