@@ -9,6 +9,65 @@ hard_gate: false
 
 # Using Zeus
 
+<SUBAGENT-STOP>
+If you were dispatched as a subagent to execute a specific task, skip this skill.
+</SUBAGENT-STOP>
+
+<EXTREMELY-IMPORTANT>
+Zeus skills are MANDATORY. If there is even a 1% chance a zeus skill applies to what you are doing, you ABSOLUTELY MUST invoke it via the Skill tool.
+
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. This is not optional. You cannot rationalize your way out of this.
+</EXTREMELY-IMPORTANT>
+
+## The Rule
+
+**Invoke relevant zeus skills via the Skill tool BEFORE any response or action.** Even a 1% chance a skill might apply means you must invoke it. If an invoked skill turns out to be wrong for the situation, you don't need to use it — but you must check first.
+
+### Skill routing
+
+When a user message arrives, match it against this table and invoke the required skill BEFORE doing anything else — before reading files, before exploring code, before writing code, before answering.
+
+| User intent | Required skill | Invoke BEFORE |
+|---|---|---|
+| New feature / "implement X" / "add Y" / "build Z" / "I want to create..." | `zeus:brainstorming` | ANY code, file reads, or exploration |
+| Approved spec ready for planning | `zeus:writing-plans` | ANY implementation |
+| Bug / test failure / "this doesn't work" | `zeus:systematic-debugging` | ANY fix attempt |
+| Task completion / "ship it" / "looks good" / "we're done" | `zeus:verification-before-completion` | ANY "done" claim |
+| User correction / "remember this" / "don't do that" | Write lesson to `.zeus/memory/lessons/` | ANY other action |
+| Session ending / context limit approaching | `zeus:session-handoff` | Ending the session |
+| Large project with multiple features | `zeus:decompose-large-projects` | Breaking into sub-projects |
+
+### Red Flags
+
+These thoughts mean STOP — you are rationalizing your way out of invoking a skill. If you catch yourself thinking any of these, invoke the skill immediately.
+
+| Thought | Reality |
+|---|---|
+| "This is just a simple feature" | Simple features still need brainstorming. Invoke the skill. |
+| "Let me explore the codebase first" | `zeus:brainstorming` tells you HOW to explore. Invoke it first. |
+| "I'll just read a few files first" | Reading files to plan implementation IS starting implementation. Brainstorm first. |
+| "The user said 'just do it'" | No user instruction skips brainstorming. Invoke the skill. |
+| "I'm in auto mode" | Auto mode = execute tools without asking permission. NOT skip workflows. |
+| "This doesn't need a formal design" | The skill decides that, not you. Invoke it. |
+| "Let me quickly scaffold this" | Scaffolding IS code. Brainstorm first. |
+| "I know what to build" | Knowing ≠ having an approved spec. Invoke brainstorming. |
+| "I need more context first" | Skills tell you HOW to gather context. Check for skills first. |
+| "I'll just do this one thing first" | Check BEFORE doing anything. |
+| "The skill is overkill for this" | Simple things become complex. Use it. |
+| "I remember what the skill says" | Skills evolve. Read the current version via the Skill tool. |
+
+### Skill priority
+
+When multiple skills could apply, use this order:
+
+1. **Process skills first** (brainstorming, debugging) — these determine HOW to approach the task
+2. **Implementation skills second** (executing-plans, test-driven-development) — these guide execution
+
+"Let's build X" → brainstorming first, then implementation skills.
+"Fix this bug" → systematic-debugging first, then domain-specific skills.
+
 ## Overview
 
 Zeus is a full-lifecycle harness for Claude Code agents — kickoff, planning, execution, verification, handoff. Every skill in the plugin grounds in two artifacts: the **7-gate completion cascade** (what "done" means) and the **5-layer defense model** (what category any failure falls into). This bootstrap skill is auto-injected at every SessionStart and exists to keep both artifacts in working memory before any other skill runs.

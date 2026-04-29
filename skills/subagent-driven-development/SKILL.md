@@ -43,7 +43,7 @@ digraph when_to_use {
 
 ## Process flow
 
-1. **Read plan file.** Verify `**User-approved:**` footer exists. Refuse without it.
+1. **Read plan file.** Verify `**User-approved:**` footer exists. Refuse without it. Then verify the plan references a brainstorming spec (Section 1 or header). If the spec file is missing or incomplete (lacks all 6 sections), refuse: "Plan references spec at `<path>`, but spec is missing or incomplete. Run `zeus:brainstorming` first."
 2. **Read AGENTS.md** — extract DoD, Commands, Conventions (file-size thresholds), Invariants. **Read Logic Completeness Manifest** (plan Section 9).
 3. **Extract all tasks** with full text from plan Section 4. Create task list. Note inter-task dependencies and context each task needs.
 4. **Per-task execution:**
@@ -144,6 +144,7 @@ Never ignore an escalation or force the same model to retry without changes.
 ## Red flags / Stop conditions
 
 - Plan has no `**User-approved:**` footer → refuse to execute.
+- Plan references no brainstorming spec, or spec file is missing → refuse to execute, redirect to `zeus:brainstorming`.
 - Implementer reports BLOCKED and no resolution path is clear → escalate to user.
 - Spec reviewer finds unauthorized simplification vs Manifest → implementer must fix before quality review.
 - Code quality reviewer flags custom validation scripts instead of ecosystem-standard tools → Critical issue, must fix.

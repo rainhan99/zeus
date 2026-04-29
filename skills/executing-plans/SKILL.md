@@ -23,7 +23,7 @@ The plan must contain the footer signature `**User-approved:** <timestamp> by <u
 
 ## Process flow
 
-1. **Read plan file.** Verify the `**User-approved:**` footer exists. If missing, refuse: "This plan has no approval signature. Run `zeus:writing-plans` Phase 4 to get user approval first."
+1. **Read plan file.** Verify the `**User-approved:**` footer exists. If missing, refuse: "This plan has no approval signature. Run `zeus:writing-plans` Phase 4 to get user approval first." Then verify the plan references a brainstorming spec (Section 1 or header). If the spec file is missing or incomplete (lacks all 6 sections), refuse: "Plan references spec at `<path>`, but spec is missing or incomplete. Run `zeus:brainstorming` first."
 2. **Check subagent availability.** If the platform supports subagents (Claude Code Agent tool, Codex subagent, etc.), suggest: "Subagents are available. Consider `zeus:subagent-driven-development` for higher quality (two-stage review per task). Continue with sequential execution? [y/n]" Proceed only after the user confirms.
 3. **Read AGENTS.md.** Extract Definition of Done items, Commands, Conventions (including file-size thresholds), and Invariants.
 4. **Read Logic Completeness Manifest** (plan Section 9). Note any authorized simplifications. Everything else must be implemented in full.
@@ -94,6 +94,7 @@ If tempted to write a quick grep or shell one-liner instead of running the real 
 ## Red flags / Stop conditions
 
 - Plan has no `**User-approved:**` footer → refuse to execute.
+- Plan references no brainstorming spec, or spec file is missing → refuse to execute, redirect to `zeus:brainstorming`.
 - Plan references files or APIs that don't exist → stop, report to user.
 - Verification command fails 3 times → escalate to `zeus:brainstorming`.
 - Agent discovers unauthorized simplification (TODO / stub / mock-as-final not in Manifest) → fix before proceeding.
