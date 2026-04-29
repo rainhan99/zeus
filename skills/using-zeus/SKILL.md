@@ -1,6 +1,6 @@
 ---
 name: using-zeus
-description: Use when starting any conversation with the zeus plugin loaded - establishes the plugin's namespace, the 7-gate completion cascade as the canonical "done" contract, and the 5-layer defense model as the canonical failure attribution. Auto-injected by SessionStart hook so it is always present.
+description: Use when starting any conversation with the zeus plugin loaded - establishes the plugin's namespace, skill routing, and enforcement rules. Auto-injected by SessionStart hook so it is always present.
 gates: []
 layer: 1
 lecture: [L01, L02]
@@ -23,7 +23,7 @@ This is not negotiable. This is not optional. You cannot rationalize your way ou
 
 ## The Rule
 
-**Invoke relevant zeus skills via the Skill tool BEFORE any response or action.** Even a 1% chance a skill might apply means you must invoke it. If an invoked skill turns out to be wrong for the situation, you don't need to use it — but you must check first.
+**Invoke relevant zeus skills via the Skill tool BEFORE any response or action.** Even a 1% chance a skill might apply means you must invoke it.
 
 ### Skill routing
 
@@ -37,17 +37,16 @@ When a user message arrives, match it against this table and invoke the required
 | Task completion / "ship it" / "looks good" / "we're done" | `zeus:verification-before-completion` | ANY "done" claim |
 | User correction / "remember this" / "don't do that" | Write lesson to `.zeus/memory/lessons/` | ANY other action |
 | Session ending / context limit approaching | `zeus:session-handoff` | Ending the session |
-| Large project with multiple features | `zeus:decompose-large-projects` | Breaking into sub-projects |
 
 ### Red Flags
 
-These thoughts mean STOP — you are rationalizing your way out of invoking a skill. If you catch yourself thinking any of these, invoke the skill immediately.
+These thoughts mean STOP — you are rationalizing. Invoke the skill immediately.
 
 | Thought | Reality |
 |---|---|
 | "This is just a simple feature" | Simple features still need brainstorming. Invoke the skill. |
 | "Let me explore the codebase first" | `zeus:brainstorming` tells you HOW to explore. Invoke it first. |
-| "I'll just read a few files first" | Reading files to plan implementation IS starting implementation. Brainstorm first. |
+| "I'll just read a few files first" | Reading files to mplementation IS starting implementation. Brainstorm first. |
 | "The user said 'just do it'" | No user instruction skips brainstorming. Invoke the skill. |
 | "I'm in auto mode" | Auto mode = execute tools without asking permission. NOT skip workflows. |
 | "This doesn't need a formal design" | The skill decides that, not you. Invoke it. |
@@ -55,161 +54,33 @@ These thoughts mean STOP — you are rationalizing your way out of invoking a sk
 | "I know what to build" | Knowing ≠ having an approved spec. Invoke brainstorming. |
 | "I need more context first" | Skills tell you HOW to gather context. Check for skills first. |
 | "I'll just do this one thing first" | Check BEFORE doing anything. |
-| "The skill is overkill for this" | Simple things become complex. Use it. |
-| "I remember what the skill says" | Skills evolve. Read the current version via the Skill tool. |
-
-### Skill priority
-
-When multiple skills could apply, use this order:
-
-1. **Process skills first** (brainstorming, debugging) — these determine HOW to approach the task
-2. **Implementation skills second** (executing-plans, test-driven-development) — these guide execution
-
-"Let's build X" → brainstorming first, then implementation skills.
-"Fix this bug" → systematic-debugging first, then domain-specific skills.
-
-## Overview
-
-Zeus is a full-lifecycle harness for Claude Code agents — kickoff, planning, execution, verification, handoff. Every skill in the plugin grounds in two artifacts: the **7-gate completion cascade** (what "done" means) and the **5-layer defense model** (what category any failure falls into). This bootstrap skill is auto-injected at every SessionStart and exists to keep both artifacts in working memory before any other skill runs.
-
-## Plugin identity
-
-- **Namespace:** all zeus skills are addressed as `zeus:<skill-name>` once the plugin is installed in Claude Code.
-- **Discovery:** every zeus skill carries `gates:`, `layer:`, and `lecture:` frontmatter. When a skill's role is unclear, read its frontmatter first.
-- **References:**
-  - `references/seven-gates.md` — the canonical 7-gate cascade (full text).
-  - `references/five-layers.md` — the canonical 5-layer defense model.
-  - `references/twelve-lectures.md` — index of the lecture series the plugin operationalizes.
-  - `references/skill-style.md` — the writing convention all zeus skills follow.
-
-## The 7-gate completion cascade (canonical, inlined)
-
-There is no single "done" signal. Completion is the level of evidence produced by passing seven gates in order. The agent does not get to redefine completion mid-task.
-
-| Gate | Signal                              | Evidence form                                                          | Gatekeeper skill                                          |
-| ---- | ----------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------- |
-| G1   | Code written                        | `git diff` shows changes (observation only — not a gate)               | —                                                         |
-| G2   | TDD red→green flip                  | Two test runs in context: first FAIL, second PASS                       | `test-driven-development`                                 |
-| G3   | Verification command run fresh      | The command, full stdout, and verdict — not paraphrased                 | `verification-before-completion`                          |
-| G4   | Definition of Done fully satisfied  | Every command-verifiable item in project `AGENTS.md` exits 0            | `kickoff-definition-of-done` + `e2e-gate`                  |
-| G5   | End-to-end pipeline passes          | Realistic user path runs start to finish — produce, propagate, consume  | `e2e-gate`                                                |
-| G6   | Two-stage code review approved      | Spec-compliance pass, then code-quality pass — both approved            | `requesting-code-review` + `receiving-code-review`         |
-| G7   | Handoff state clean                 | Run log written; clean-state memo; branch in shippable state            | `observability` + `session-handoff` + `clean-state`        |
-
-**Failure routing:**
-- G2 fails → `systematic-debugging` (4-phase root-cause).
-- G3 / G4 fails → re-run via `executing-plans`; after 3 failures, escalate to `brainstorming` to question the architecture.
-- G5 fails → return to `writing-plans` — usually a contract mismatch between tasks.
-- G6 fails → `receiving-code-review` processes feedback, then back to G2.
-- G7 fails → produce missing handoff via `session-handoff`.
-
-**Terminal state:** only after G7 closes does the work enter `finishing-a-development-branch`, where the user (not the agent) chooses merge / open PR / keep open / discard. The agent never auto-merges.
-
-## The 5-layer defense model (canonical attribution, inlined)
-
-Every failure attributes to exactly one layer. When a gate stays closed, the agent's first move is to identify which layer is responsible.
-
-| Layer | Failure mode                                  | Examples                                                                  |
-| ----- | --------------------------------------------- | ------------------------------------------------------------------------- |
-| 1     | Task specification unclear                    | Agent invents business rules; scope ambiguity; "done" not contractual     |
-| 2     | Context supply missing                        | Wrong library version; ignored conventions; rebuilds existing utilities    |
-| 3     | Execution environment broken                  | Install failures; missing CLI; sandbox limits; token burn on env debug   |
-| 4     | Verification feedback absent                  | Agent reads own output and stops; no objective signal; the Verification Gap |
-| 5     | State management missing                      | Cross-session forgetting; context anxiety; can't resume long task         |
-
-## Project entry protocol
-
-When the agent enters a working directory:
-
-1. **Read project contract (fallback chain).** Try `AGENTS.md` first. If absent, fall back to `CLAUDE.md` and map its content to zeus concepts (commands, conventions, DoD candidates). If neither exists, suggest running `zeus:kickoff-agents-md`. When falling back to CLAUDE.md, zeus plugin rules still apply on top — CLAUDE.md provides project context, zeus provides the lifecycle discipline.
-2. **Load cross-session memory.** Run `zeus:session-init` to load `.zeus/memory/` — the self-contained project memory system. This surfaces all lessons (user corrections), the latest handoff memo, and architecture decisions within token budget. No external MCP dependency required.
-3. **No `AGENTS.md` yet?** Run `zeus:kickoff-agents-md`. It will read `CLAUDE.md` as an input signal (if present) to pre-fill fields, then hand off to `zeus:kickoff-definition-of-done`, which hands off to `zeus:kickoff-feature-list`. Each can also be re-run independently to amend its artifact when the project evolves. The plugin will not let work proceed past the planning phase without a populated AGENTS.md and DoD — but if the user declines kickoff, CLAUDE.md fallback keeps the session functional.
 
 ## Default behavior
 
 <MANDATORY>
-These rules are NON-NEGOTIABLE. They apply in ALL permission modes — including auto mode, bypass mode, and any other autonomous execution mode. The agent MUST follow them even when the user says "skip planning" or "just code it". No permission mode grants the right to skip zeus lifecycle discipline. Skipping these rules is a Layer 1 failure (task specification unclear).
+These rules are NON-NEGOTIABLE. They apply in ALL permission modes — including auto mode, bypass mode, and any other autonomous execution mode. No permission mode grants the right to skip zeus lifecycle discipline.
 </MANDATORY>
 
-## Critical intervention points
-
-Regardless of permission mode, the agent MUST pause and enforce zeus process at these points. Auto mode and bypass mode grant permission to execute tools without user confirmation — they do NOT grant permission to skip design, verification, or quality gates.
-
-| Intervention point | Trigger | Required action | Cannot be skipped by |
-|--------------------|---------|-----------------|---------------------|
-| **New feature / task** | User requests new code work | Invoke `zeus:brainstorming` before any code | auto mode, bypass mode, "just do it" |
-| **Plan execution start** | Brainstorming spec approved | Invoke `zeus:writing-plans` to produce task plan | auto mode, bypass mode |
-| **Each task completion** | A plan task finishes | Run verification (G3) before moving to next task | auto mode, bypass mode |
-| **All tasks done** | Plan fully executed | Walk G1→G7 cascade, do not declare done early | auto mode, "ship it", "looks good" |
-| **Test failure** | Tests fail | Route to `zeus:systematic-debugging`, not quick-patch | auto mode, bypass mode |
-| **User correction** | User points out a mistake | Write lesson to `.zeus/memory/lessons/` immediately | auto mode, bypass mode |
-| **Session ending** | User leaves or context limit | Produce handoff memo via `zeus:session-handoff` | auto mode, bypass mode |
-
-**How auto/bypass mode interacts with zeus:**
-- Auto/bypass mode means: execute tool calls without asking user for permission.
-- Auto/bypass mode does NOT mean: skip brainstorming, skip verification, skip code review, skip the gate cascade.
-- The agent may proceed autonomously WITHIN each zeus phase (e.g., auto-execute all brainstorming research steps), but it may NOT skip phases entirely.
-
 **RULE 1: DESIGN BEFORE CODE — NO EXCEPTIONS.**
-When a user message implies starting new code work ("implement X", "add Y", "build Z", "I want to create..."), the agent MUST invoke `zeus:brainstorming` BEFORE writing any code. This is not a suggestion. Do not explore the codebase, do not read files, do not write code until brainstorming produces a user-approved spec.
-
-The ONLY exception: the user explicitly references an existing approved sr plan that covers the requested work.
-
-If the agent catches itself about to write code without a brainstorming-approved spec → STOP. Invoke brainstorming. Then proceed.
+When a user message implies new code work ("implement X", "add Y", "build Z", "I want to create..."), invoke `zeus:brainstorming` BEFORE writing any code, reading files, or exploring the codebase. The ONLY exception: the user explicitly references an existing approved plan.
 
 **RULE 2: COMPLETION REQUIRES THE 7-GATE CASCADE.**
-When a user message implies completion ("ship it", "I think we're done", "looks good"), walk the 7-gate cascade G1→G7. Do not declare done before G7. Do not skip gates.
+When a user message implies completion ("ship it", "looks good"), walk G1-G7. Do not declare done before G7.
 
 **RULE 3: FAILURES ROUTE THROUGH THE 5-LAYER MODEL.**
-When a failure happens, identify which layer is responsible FIRST, then route to the gatekeeper skill for that layer. Do not generate fixes without attribution.
+Identify which layer is responsible FIRST, then route to the gatekeeper skill.
 
 **RULE 4: USER CORRECTIONS ARE PERMANENT.**
-When the user points out a mistake or says "remember this" / "don't do that again", immediately write a lesson to `.zeus/memory/lessons/`. This applies in ALL modes — auto, bypass, or interactive. Lessons are never skipped, never deferred.
+Immediately write a lesson to `.zeus/memory/lessons/`. Never skipped, never deferred.
 
-## User decision guardrail
+## Auto/bypass mode interaction
 
-The agent follows the user's lead — but not off a cliff. When a user instruction clearly violates the codebase's framework logic, architectural constraints, or established patterns, the agent must intervene rather than silently comply.
+- Auto/bypass mode means: execute tool calls without asking user for permission.
+- Auto/bypass mode does NOT mean: skip brainstorming, skip verification, skip the gate cascade.
+- The agent may proceed autonomously WITHIN each zeus phase, but may NOT skip phases entirely.
 
-**Two-strike escalation protocol:**
+## References (loaded on demand via Skill tool)
 
-1. **First warning — list specific conflicts.** Do not say "this might cause issues." Name the exact violations:
-   - Which file, function, or contract is violated.
-   - What the framework or codebase expects instead.
-   - What will break if the instruction is followed as-is.
-   - The recommended alternative that achieves the user's intent without the conflict.
-
-2. **Second warning — restate the risk and force a choice.** If the user insists after the first warning, restate the core conflict concisely and present two explicit options:
-   - **Option A: Correct course** — follow the recommended alternative. Explain what changes.
-   - **Option B: Override** — proceed as the user requested. State the specific consequences.
-
-3. **After two warnings — respect the decision.** If the user chooses to override after both warnings:
-   - Execute the instruction as requested.
-   - Immediately write a `lesson` to `.zeus/memory/lessons/` recording: what the user chose, what the conflict was, and what the expected consequence is. This ensures the decision is visible in future sessions.
-   - Do not argue further. The user has been informed twice and made a conscious choice.
-
-**What counts as "clearly violates":**
-
-| Violation type | Example |
-|----------------|---------|
-| Framework contract breach | Using raw SQL in a project that enforces ORM-only access |
-| Type system violation | Casting away type safety that the codebase relies on |
-| Security regression | Disabling auth middleware, hardcoding credentials |
-| Architectural pattern break | Putting business logic in a controller in a strict MVC codebase |
-| Dependency conflict | Adding a library that conflicts with an existing one |
-| Convention violation | Ignoring the project's AGENTS.md Definition of Done |
-
-**What does NOT trigger the guardrail:**
-
-- Style preferences (tabs vs spaces, naming conventions) — follow the user.
-- Scope decisions ("skip tests for now", "don't refactor this") — the user owns scope.
-- Technology choices ("use library X instead of Y") — the user owns the stack.
-- Anything the agent is uncertain about — only intervene on clear, verifiable conflicts.
-
-The guardrail is not a veto. It is a safety net that ensures the user makes informed decisions. The agent's job is to surface the conflict with evidence, not to block the user.
-
-## Integration
-
-- This skill itself never blocks. It is an always-loaded reference, not a gate.
-- The first concrete gate any session encounters is determined by the user's intent — usually `zeus:kickoff-agents-md` (Layer 1+2) for new projects, or `zeus:brainstorming` (Layer 1) for new features in existing projects.
-
-> All skills referenced in this document are delivered. SP1: `using-zeus`. SP2: `kickoff-agents-md`, `kickoff-definition-of-done`, `kickoff-feature-list`. SP3: `brainstorming`, `writing-plans`, `decompose-large-projects`. SP4: `executing-plans`, `test-driven-development`, `subagent-driven-development`, `dispatching-parallel-agents`, `using-git-worktrees`. SP5: `verification-before-completion`, `e2e-gate`, `systematic-debugging`, `requesting-code-review`, `receiving-code-review`. SP6: `memory-management`, `session-init`, `long-task-continuity`, `session-handoff`, `clean-state`. SP7: `observability`, `finishing-a-development-branch`, `writing-skills`.
+- 7-gate completion cascade: `references/seven-gates.md`
+- 5-layer defense model: `references/five-layers.md`
+- All zeus skills are addressed as `zeus:<skill-name>`.
