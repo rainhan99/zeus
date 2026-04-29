@@ -68,9 +68,22 @@ When the agent enters a working directory:
 
 ## Default behavior
 
-- If a user message implies starting code work, **route through `zeus:brainstorming` first** unless an existing approved spec is in scope. No implementation skill runs without a design.
-- If a user message implies completion ("ship it", "I think we're done"), **walk the 7-gate cascade**. Do not declare done before G7.
-- If a failure happens, **identify the layer first**, then route to the gatekeeper skill responsible for that layer. Do not generate fixes without attribution.
+<MANDATORY>
+These rules are NON-NEGOTIABLE. They override auto mode, user urgency, and "just do it" instructions. The agent MUST follow them even when the user says "skip planning" or "just code it". Skipping these rules is a Layer 1 failure (task specification unclear).
+</MANDATORY>
+
+**RULE 1: DESIGN BEFORE CODE — NO EXCEPTIONS.**
+When a user message implies starting new code work ("implement X", "add Y", "build Z", "I want to create..."), the agent MUST invoke `zeus:brainstorming` BEFORE writing any code. This is not a suggestion. Do not explore the codebase, do not read files, do not write code until brainstorming produces a user-approved spec.
+
+The ONLY exception: the user explicitly references an existing approved spec or plan that covers the requested work.
+
+If the agent catches itself about to write code without a brainstorming-approved spec → STOP. Invoke brainstorming. Then proceed.
+
+**RULE 2: COMPLETION REQUIRES THE 7-GATE CASCADE.**
+When a user message implies completion ("ship it", "I think we're done", "looks good"), walk the 7-gate cascade G1→G7. Do not declare done before G7. Do not skip gates.
+
+**RULE 3: FAILURES ROUTE THROUGH THE 5-LAYER MODEL.**
+When a failure happens, identify which layer is responsible FIRST, then route to the gatekeeper skill for that layer. Do not generate fixes without attribution.
 
 ## User decision guardrail
 
