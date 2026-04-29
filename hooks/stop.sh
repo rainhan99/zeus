@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # Zeus Stop hook.
-# Fires when the agent is about to end its turn. Injects a reminder about
-# the session-handoff requirement (G7). Advisory only — does not block.
+# Fires when the agent is about to end its turn. Injects a factual reminder
+# about the session-handoff requirement (G7) via the Stop hook's reason field.
 #
-# A blocking Stop hook would prevent the agent from ever finishing simple
-# tasks (questions, quick fixes). Instead, this hook reminds the agent to
-# check whether a handoff memo is needed before ending.
+# Uses advisory mode (allow) — does not block the agent from stopping.
+# For sessions with code changes, the agent should produce a handoff memo.
 
 set -u
 
-REMINDER="[ZEUS G7 CHECK] Before ending this session, verify: if you performed code work in this session, have you produced a handoff memo via zeus:session-handoff? G7 requires a clean handoff state. If this was just a question or quick task with no code changes, you may proceed."
-
-printf '{"decision":"allow","reason":"%s"}\n' "$REMINDER"
+# Allow the stop — just exit cleanly. The SessionStart context already
+# covers the G7 handoff requirement. A blocking Stop hook would prevent
+# the agent from finishing simple tasks (questions, quick fixes).
 exit 0

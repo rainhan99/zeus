@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # Zeus UserPromptSubmit hook.
-# Fires when the user submits a message. Injects a brief reminder about
-# the zeus workflow — brainstorming before code, skills before action.
-# This is the "earliest" enforcement layer: it fires before the agent
-# even starts thinking about the user's request.
+# Fires when the user submits a message. Injects a factual reminder about
+# the zeus workflow into Claude's context via additionalContext.
+#
+# IMPORTANT: additionalContext must use factual statements, not imperative
+# commands. Imperative text triggers Claude's prompt-injection defenses.
 
 set -u
 
-REMINDER="[ZEUS WORKFLOW] Before responding to this message, check the zeus skill routing table (injected at session start). If the user is requesting new code work, you MUST invoke the Skill tool with 'zeus:brainstorming' BEFORE reading files, exploring code, or writing code. This is mandatory in ALL modes including auto mode."
+CONTEXT="Zeus plugin is active in this session. The zeus workflow requires that new feature requests (implement X, add Y, build Z, create something) go through a brainstorming phase before any code is written. The brainstorming phase is initiated by invoking the Skill tool with skill name 'zeus:brainstorming'. This applies in all modes including auto mode. Reading files to plan implementation counts as starting implementation. The skill routing table in the session context maps user intents to required skills."
 
-printf '{"decision":"allow","reason":"%s"}\n' "$REMINDER"
+printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"%s"}}\n' "$CONTEXT"
 exit 0
