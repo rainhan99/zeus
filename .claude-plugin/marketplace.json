@@ -7,7 +7,7 @@
     {
       "name": "zeus",
       "source": "./",
-      "version": "0.10.0",
+      "version": "0.10.1",
       "description": "Full-lifecycle harness for Claude Code agents — kickoff, planning, execution, verification, handoff."
     }
   ]
