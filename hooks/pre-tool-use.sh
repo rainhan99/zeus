@@ -1,14 +1,36 @@
 #!/usr/bin/env bash
 # Zeus PreToolUse hook.
-# Fires before Read, Edit, Write, and NotebookEdit tool calls. Injects a
-# factual reminder about the brainstorming requirement via additionalContext.
+# Fires before Edit, Write, and NotebookEdit tool calls.
 #
-# IMPORTANT: additionalContext must use factual statements, not imperative
-# commands. Imperative text triggers Claude's prompt-injection defenses.
+# Enforcement logic:
+#   1. Writes to .zeus/ directory → always allow (specs, state, memory)
+#   2. .zeus/state/spec-approved exists → allow (brainstorming done)
+#   3. Otherwise → deny with reason (forces brainstorming first)
+#
+# Uses permissionDecision:"deny" for hard enforcement that auto mode
+# cannot override. The model sees permissionDecisionReason and is
+# forced to invoke zeus:brainstorming before writing any code.
 
 set -u
 
-CONTEXT="Zeus plugin enforcement: new feature work requires an approved brainstorming spec before any file reads or code changes. The spec is produced by invoking the Skill tool with skill name 'zeus:brainstorming'. If no brainstorming spec has been approved for the current feature request, this file operation may be premature."
+TOOL_INPUT="$(cat /dev/stdin 2>/dev/null || echo '{}')"
 
-printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"%s"}}\n' "$CONTEXT"
+FILE_PATH="$(printf '%s' "$TOOL_INPUT" | jq -r '.tool_input.file_path // .tool_input.path // ""' 2>/dev/null)"
+
+if printf '%s' "$FILE_PATH" | grep -q '\.zeus/' 2>/dev/null; then
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}\n'
+  exit 0
+fi
+
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
+MARKER="$PROJECT_DIR/.zeus/state/spec-approved"
+
+if [ -f "$MARKER" ]; then
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow"}}\n'
+  exit 0
+fi
+
+REASON="Zeus enforcement: no approved brainstorming spec found. Code changes are blocked until a spec is approved. To unblock, invoke the Skill tool with skill name zeus:brainstorming — this will walk through the design process and produce an approved spec. After approval, code changes will be allowed. This applies in all modes including auto mode."
+
+printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$REASON"
 exit 0
