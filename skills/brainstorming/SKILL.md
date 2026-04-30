@@ -11,6 +11,26 @@ hard_gate: true
 
 Turn ideas into fully formed designs through collaborative dialogue, anchored in the project's binding contract. L01's core argument: capable agents fail at execution because they invent context; brainstorming forces them to read the contract first.
 
+## Phase banner (print first)
+
+Before any other action in this skill, your **first user-facing output** MUST be the phase banner below, matched to the user's conversation language. Use ZH verbatim for Chinese, EN verbatim for English; for any other language, translate the EN template preserving the structure (header line, Goal, Not yet, Output). Print it as a fenced code block so the separators render cleanly.
+
+**EN:**
+```
+━━━ Phase 1/3 · Discussion ━━━
+Goal: lock in WHAT — scope, boundaries, decisions
+Not yet: code, tasks, file paths
+Output: spec → your approval → Phase 2 (Design)
+```
+
+**ZH:**
+```
+━━━ 阶段 1/3 · 方案讨论 ━━━
+目标:锁定「做什么」— 范围、边界、决策点
+此阶段不做:写代码、拆任务、定文件路径
+产出:spec 文档 → 你批准 → 进入阶段 2(设计)
+```
+
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have written a spec and the user has approved it. This applies to EVERY feature regardless of perceived simplicity.
 </HARD-GATE>

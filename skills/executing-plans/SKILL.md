@@ -13,6 +13,26 @@ hard_gate: true
 
 L07's argument: agents overreach and under-finish — they start too many things and close none of them properly. L09's argument: agents declare victory based on internal reasoning rather than running the actual check. Executing-plans addresses both by forcing the agent to follow a pre-approved plan task by task, running each verification command fresh, and escalating after repeated failures instead of guessing. The plan is the contract; the agent executes it, not rewrites it.
 
+## Phase banner (print first)
+
+Before any other action in this skill, your **first user-facing output** MUST be the phase banner below, matched to the user's conversation language. Use ZH verbatim for Chinese, EN verbatim for English; for any other language, translate the EN template preserving the structure (header line, Goal, Frozen, Output). Print it as a fenced code block so the separators render cleanly.
+
+**EN:**
+```
+━━━ Phase 3/3 · Execution ━━━
+Goal: walk plan task by task — write code, run tests, capture evidence
+Frozen: architecture decisions — if plan is wrong, return to Phase 2; do not improvise
+Output: passing tests + DoD exit 0 → handoff
+```
+
+**ZH:**
+```
+━━━ 阶段 3/3 · 执行 ━━━
+目标:按 plan 逐 task 落地 — 写代码、跑测试、留证据
+已冻结:架构决策 — 若发现 plan 有误,回阶段 2 修改,不就地改架构
+产出:测试全过 + DoD exit 0 → 进入交接
+```
+
 ## Iron Law
 
 **NO TASK EXECUTES WITHOUT A USER-APPROVED PLAN.**

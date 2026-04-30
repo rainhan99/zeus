@@ -13,6 +13,26 @@ hard_gate: true
 
 Writing-plans turns an approved brainstorming spec into a concrete, bite-sized, command-verifiable implementation plan. It re-reads the spec word-by-word from senior-architect lenses for every active tech stack, surfaces risks the spec didn't catch, and produces a 10-section plan that bakes test coverage, security scans, multi-stack logic review, and anti-simplification guarantees directly into the document. Execution is hard-gated by a footer signature so no task runs until the user explicitly approves.
 
+## Phase banner (print first)
+
+Before any other action in this skill, your **first user-facing output** MUST be the phase banner below, matched to the user's conversation language. Use ZH verbatim for Chinese, EN verbatim for English; for any other language, translate the EN template preserving the structure (header line, Goal, Not yet, Output). Print it as a fenced code block so the separators render cleanly.
+
+**EN:**
+```
+━━━ Phase 2/3 · Design ━━━
+Goal: turn approved spec into executable steps — File Map, tasks, TDD, verify commands
+Not yet: code (just the route map)
+Output: plan → your approval → Phase 3 (Execution)
+```
+
+**ZH:**
+```
+━━━ 阶段 2/3 · 设计 ━━━
+目标:把已批准方案拆成可执行步骤 — File Map、任务清单、TDD 步骤、验证命令
+此阶段不做:写代码(只画路线图)
+产出:plan 文档 → 你批准 → 进入阶段 3(执行)
+```
+
 ## Iron Law
 
 **NO PLAN SHIPS WITHOUT:**
