@@ -141,5 +141,6 @@ If tempted to write a quick grep or shell one-liner instead of running the real 
 - **Calls:** `zeus:test-driven-development` per task.
 - **Escalates to:** `zeus:brainstorming` after 3 verification failures.
 - **Alternative:** `zeus:subagent-driven-development` (suggested when subagents available).
+- **References:** `references/karpathy-principles.md` — Simplicity First and Surgical Changes constrain per-task code changes.
 - **Gates addressed:** G3 (fresh verification per task), G4 (full DoD run).
 - **Defends layer:** 3 (execution environment).
