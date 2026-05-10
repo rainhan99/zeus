@@ -207,6 +207,6 @@ State the correction factually and move on. No long apology. No defending why yo
 
 - **Predecessor:** `zeus:requesting-code-review` (feedback received from reviewer).
 - **Routes back to:** `zeus:test-driven-development` (G2) for implementing fixes.
-- **References:** `systematic-debugging/defense-in-depth.md` for multi-layer validation.
+- **References:** `systematic-debugging/defense-in-depth.md` for multi-layer validation; `references/karpathy-principles.md` — Surgical Changes (do not perform unrequested refactors during review pickup) and Simplicity First (do not expand scope when implementing review feedback).
 - **Gates addressed:** G6 — processes review feedback, then back to G2 for fixes.
 - **Defends layer:** 4 (verification feedback).
