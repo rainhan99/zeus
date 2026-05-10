@@ -12,3 +12,4 @@ __pycache__/
 docs/
 AGENTS.md
 FEATURES.md
+.zeus/
