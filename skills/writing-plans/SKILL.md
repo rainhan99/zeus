@@ -217,5 +217,6 @@ For stacks not in the table, generate the equivalent checklist at runtime: "what
 
 - **Predecessor:** `zeus:brainstorming` (spec must exist) or `zeus:kickoff-feature-list` (FEATURES.md must exist).
 - **Successor:** SP4's `zeus:executing-plans` or `zeus:subagent-driven-development` (forward references; not yet landed).
+- **References:** `references/karpathy-principles.md` — Simplicity First and Surgical Changes apply to every plan task this skill produces.
 - **Gates addressed:** G4 (DoD delta + Logic Completeness Manifest are the contract execution-time gates enforce).
 - **Defends layer:** 1 (task spec) and 4 (verification feedback).
