@@ -1,6 +1,6 @@
 ---
 name: kickoff-feature-list
-description: Use when starting a project with multiple planned features, or when adding a feature to an existing project's roadmap. Maintains FEATURES.md at the project root - one entry per feature with status (planned/in-progress/done/abandoned), spec/plan links, and a feature-specific DoD subset. Other zeus skills read FEATURES.md to scope plans and verify completeness.
+description: Use when starting a project with multiple planned features, or when adding a feature to an existing project's roadmap. Maintains .zeus/features.md at the project root - one entry per feature with status (planned/in-progress/done/abandoned), spec/plan links, and a feature-specific DoD subset. Other zeus skills read .zeus/features.md to scope plans and verify completeness.
 gates: []
 layer: 1
 lecture: [L08]
@@ -11,30 +11,30 @@ hard_gate: false
 
 ## Overview
 
-L08's argument: feature lists are harness primitives. Without an explicit list of "what we're building", the agent over-reaches (working on Feature B mid-Feature A) or under-finishes (touching three features halfway). FEATURES.md is the project's roadmap — one entry per feature with stable IDs, status, spec/plan links, and a per-feature DoD subset. Other zeus skills (writing-plans, e2e-gate, observability) read this file to scope work and verify completeness.
+L08's argument: feature lists are harness primitives. Without an explicit list of "what we're building", the agent over-reaches (working on Feature B mid-Feature A) or under-finishes (touching three features halfway). .zeus/features.md is the project's roadmap — one entry per feature with stable IDs, status, spec/plan links, and a per-feature DoD subset. Other zeus skills (writing-plans, e2e-gate, observability) read this file to scope work and verify completeness.
 
 ## Process flow
 
-1. **Precondition check.** If `AGENTS.md` is missing OR its `## Definition of Done` section has zero items, abort with: "Run `zeus:kickoff-agents-md` and `zeus:kickoff-definition-of-done` first."
-2. **Detect candidate features.** Scan `docs/specs/*-design.md` and `docs/plans/*.md`. Each existing spec or plan implies a feature.
-3. **Read existing FEATURES.md** if present (amend mode). Otherwise create a new file.
+1. **Precondition check.** Resolve the project contract per `references/project-contract.md`. If neither `CLAUDE.md` nor `AGENTS.md` exists, OR if the contract's `## Definition of Done` section (or `.zeus/dod.md`) has zero items, abort with: "Run `zeus:kickoff-agents-md` and `zeus:kickoff-definition-of-done` first."
+2. **Detect candidate features.** Scan `.zeus/specs/*-design.md` and `.zeus/plans/*.md`. Each existing spec or plan implies a feature.
+3. **Read existing .zeus/features.md** if present (amend mode). Otherwise create a new file.
 4. **Classify (amend mode).** UNCHANGED for entries that match detection; DRIFT if status changed (e.g., spec age says it should be `done` now); NEW for orphan specs/plans.
 5. **Interview features.** For each detected candidate, confirm/edit. Then ask: "Any other features planned? (free-form list, type 'done' to finish.)" For each user-named feature, capture status, spec link if any, plan link if any, DoD subset.
 6. **Assign IDs.** Monotonically increase from existing max F-ID, or start at F-001. Never reuse IDs.
-7. **Write FEATURES.md.**
-8. **Verify.** Each `## F-NNN: ` block has Status, Spec (or `—`), Plan (or `—`), DoD subset (or `(inherits all from AGENTS.md DoD)`).
+7. **Write .zeus/features.md.**
+8. **Verify.** Each `## F-NNN: ` block has Status, Spec (or `—`), Plan (or `—`), DoD subset (or `(inherits all from project contract DoD)`).
 9. **Handoff.** Tell the user: "Feature roadmap locked. Run `zeus:brainstorming` to design the first planned feature."
 
 ```dot
 digraph kickoff_feature_list {
-  precheck [label="1. AGENTS.md + DoD ready?", shape=diamond];
+  precheck [label="1. Contract + DoD ready?", shape=diamond];
   abort [label="Abort: run prior kickoff", shape=box];
   detect [label="2. Detect specs/plans", shape=box];
-  read [label="3. Read existing FEATURES.md", shape=box];
+  read [label="3. Read existing .zeus/features.md", shape=box];
   classify [label="4. Classify (amend mode)", shape=box];
   interview [label="5. Interview features", shape=box];
   ids [label="6. Assign monotonic IDs", shape=box];
-  write [label="7. Write FEATURES.md", shape=box];
+  write [label="7. Write .zeus/features.md", shape=box];
   verify [label="8. Verify per-block fields", shape=diamond];
   handoff [label="9. Handoff to brainstorming", shape=doublecircle];
 
@@ -51,7 +51,7 @@ digraph kickoff_feature_list {
 }
 ```
 
-## FEATURES.md format
+## .zeus/features.md format
 
 Top of file (literal):
 
@@ -66,11 +66,11 @@ Per-feature block:
 ```markdown
 ## F-001: <feature name>
 **Status:** planned | in-progress | done | abandoned
-**Spec:** docs/specs/<date>-<topic>-design.md  (or `—`)
-**Plan:** docs/plans/<date>-<topic>.md  (or `—`)
+**Spec:** .zeus/specs/<date>-<topic>-design.md  (or `—`)
+**Plan:** .zeus/plans/<date>-<topic>.md  (or `—`)
 **DoD subset:**
 - [ ] <feature-specific command>
-- [ ] <inherited from AGENTS.md DoD: e.g., pytest passes>
+- [ ] <inherited from project contract DoD: e.g., pytest passes>
 ```
 
 ID rules:
@@ -92,30 +92,30 @@ Status semantics:
 | Thought                                                                | Reality                                                                              |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | "We don't have planned features yet, skip this skill."                  | If you don't know what you're building, don't start. The "no features" answer should send you back to a brainstorm at the project level, not into code. |
-| "I'll just maintain features in my head."                               | The next session won't have your head. FEATURES.md is for cross-session continuity (Layer 5). |
+| "I'll just maintain features in my head."                               | The next session won't have your head. .zeus/features.md is for cross-session continuity (Layer 5). |
 | "Status doesn't matter, only names."                                    | `e2e-gate` (SP5) reads `Status: done` to decide whether to gate that feature. Status IS load-bearing. |
 | "Reusing F-005 after it was abandoned is fine."                         | Old git history references F-005 as the abandoned feature. Reuse breaks that audit trail. Use the next free ID. |
-| "DoD subset is redundant with AGENTS.md DoD."                           | Per-feature DoD lets `e2e-gate` test only what's in scope. Without it, every check runs for every feature, even ones that don't touch the relevant area. |
+| "DoD subset is redundant with the project contract's DoD."             | Per-feature DoD lets `e2e-gate` test only what's in scope. Without it, every check runs for every feature, even ones that don't touch the relevant area. |
 
 ## Red flags / Stop conditions
 
-- AGENTS.md missing or DoD empty → abort, redirect.
+- Project contract missing (neither CLAUDE.md nor AGENTS.md) or DoD empty → abort, redirect.
 - User wants to assign their own F-ID (e.g., F-042 because they like the number). Refuse — IDs are agent-managed for stability.
 - More than ~30 active features (status not `done` or `abandoned`). Tell the user: "30+ open features is a planning smell; consider closing or merging some before adding more."
 
 ## Verification checklist
 
-After writing FEATURES.md:
+After writing .zeus/features.md:
 
-- File exists: `[ -f FEATURES.md ]`
-- At least one feature block: `[ "$(grep -c '^## F-[0-9]\{3\}: ' FEATURES.md)" -ge 1 ]`
+- File exists: `[ -f .zeus/features.md ]`
+- At least one feature block: `[ "$(grep -c '^## F-[0-9]\{3\}: ' .zeus/features.md)" -ge 1 ]`
 - Each block has the four required fields. Verify with this awk pass — every reported line should start with `ok`:
   ```bash
   awk '/^## F-/{if (name && (!status || !spec || !plan)) print "MISSING " name; else if (name) print "ok " name; name=$0; status=""; spec=""; plan=""; next}
        /^\*\*Status:\*\*/{status=$0}
        /^\*\*Spec:\*\*/{spec=$0}
        /^\*\*Plan:\*\*/{plan=$0}
-       END {if (name && (!status || !spec || !plan)) print "MISSING " name; else if (name) print "ok " name}' FEATURES.md
+       END {if (name && (!status || !spec || !plan)) print "MISSING " name; else if (name) print "ok " name}' .zeus/features.md
   ```
 
 ## Integration

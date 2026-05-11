@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: Use when a brainstorming spec has been approved and you need a concrete implementation plan with bite-sized tasks. Reads AGENTS.md, FEATURES.md, and the linked spec. Produces a 10-section plan with per-stack senior-architect risk analysis, comprehensive test plan, security review, logic review, file-size constraints, and a Logic Completeness Manifest. The plan is hard-gated by explicit user approval recorded in a footer timestamp before any executing-plans skill can pick it up.
+description: Use when a brainstorming spec has been approved and you need a concrete implementation plan with bite-sized tasks. Reads the project contract (per `references/project-contract.md`), `.zeus/features.md`, and the linked spec. Produces a 10-section plan with per-stack senior-architect risk analysis, comprehensive test plan, security review, logic review, file-size constraints, and a Logic Completeness Manifest. The plan is hard-gated by explicit user approval recorded in a footer timestamp before any executing-plans skill can pick it up.
 gates: [G4]
 layer: 1
 lecture: [L09, L10]
@@ -37,13 +37,13 @@ Output: plan → your approval → Phase 3 (Execution)
 
 **NO PLAN SHIPS WITHOUT:**
 
-1. **Per-stack senior-architect requirements analysis** (one lens per active tech stack in AGENTS.md).
+1. **Per-stack senior-architect requirements analysis** (one lens per active tech stack in the project contract).
 2. **Per-task TDD steps with concrete commands.**
 3. **Comprehensive test plan** (unit + integration + E2E + regression).
 4. **Security review** (specific tools + threat model + named checks).
 5. **Logic review checkpoints** (multi-stack).
 6. **Logic Completeness Manifest.**
-7. **File Size Constraints** (per-file projection vs AGENTS.md thresholds).
+7. **File Size Constraints** (per-file projection vs project-contract thresholds).
 8. **User explicit approval** (footer signature with timestamp).
 
 **NO LOGIC SIMPLIFICATION WITHOUT EXPLICIT USER AUTHORIZATION RECORDED IN THE MANIFEST WITH 4 FIELDS (what / why / who / restoration).**
@@ -56,14 +56,14 @@ Output: plan → your approval → Phase 3 (Execution)
 
 ### Phase 0 — Anchor
 
-1. `cat AGENTS.md` → extract DoD items, Commands, Conventions, Invariants, file-size thresholds.
-2. `cat FEATURES.md` → locate the F-NNN target.
+1. Resolve the project contract per `references/project-contract.md` (CLAUDE.md → AGENTS.md). `cat` the selected file → extract DoD items, Commands, Conventions, Invariants, file-size thresholds.
+2. `cat .zeus/features.md` → locate the F-NNN target.
 3. `cat <spec>` (the spec being planned).
 4. Missing any → refuse, redirect to corresponding `kickoff-*` or `zeus:brainstorming`.
 
 ### Phase 1 — Per-stack senior-architect requirements analysis
 
-1. Enumerate active tech stacks from AGENTS.md `## Tech Stack`.
+1. Enumerate active tech stacks from the project contract's `## Tech Stack`.
 2. For each stack, switch the analysis lens to that stack's senior architect (use the multi-stack table below as the floor; extend at runtime as needed).
 3. For each spec requirement:
    - **Restate**: "I read this as: <verbatim rephrasing>"
@@ -96,7 +96,7 @@ Output: plan → your approval → Phase 3 (Execution)
    - Per-stack senior-architect checklist (data flow direction, error-handling layer, state ownership, race conditions, complexity threshold, module boundaries, YAGNI, 6-month maintainability).
    - Locations in the task sequence where these reviews must pause execution.
 8. **G4 contract delta**
-   - New DoD items to be appended to AGENTS.md `## Definition of Done` after this plan completes.
+   - New DoD items to be appended to the project contract's `## Definition of Done` (or `.zeus/dod.md` if DoD is out-of-tree) after this plan completes.
 9. **Logic Completeness Manifest**
    - Default body: "Every requirement in the linked spec MUST be implemented in full. Authorized simplifications: (none)"
    - If user authorizes simplification, 4-field block per item:
@@ -106,7 +106,7 @@ Output: plan → your approval → Phase 3 (Execution)
      - Approved at: <ISO timestamp>
      - Restoration ticket: <F-NNN or follow-up issue link>
 10. **File Size Constraints**
-    - Reads AGENTS.md → Conventions → File size conventions table.
+    - Reads project contract → Conventions → File size conventions table.
     - For each file in the File Map (Section 2), project a line count.
     - Flag OK / (relaxed) / OVER per file.
     - Any OVER row must include a split plan or a Manifest exception link.
@@ -144,7 +144,7 @@ This footer line is the gate `executing-plans` reads — without it, refuse to r
 
 ```dot
 digraph writing_plans {
-  anchor [label="0. Anchor (read AGENTS.md, FEATURES.md, spec)", shape=box];
+  anchor [label="0. Anchor (read project contract,\n.zeus/features.md, spec)", shape=box];
   arch [label="1. Per-stack senior architect analysis", shape=box];
   body [label="2. Plan body (10 sections)", shape=box];
   selfrev [label="3. Self-review", shape=diamond];
@@ -178,7 +178,7 @@ digraph writing_plans {
 
 For stacks not in the table, generate the equivalent checklist at runtime: "what would a senior architect of this stack want to know?"
 
-## File-size thresholds (default, sourced from AGENTS.md when present)
+## File-size thresholds (default, sourced from the project contract when present)
 
 | Scenario                       | Recommended    | Notes                                          |
 | ------------------------------ | -------------- | ---------------------------------------------- |
@@ -201,7 +201,7 @@ For stacks not in the table, generate the equivalent checklist at runtime: "what
 
 ## Red flags / Stop conditions
 
-- AGENTS.md / FEATURES.md / spec missing → abort, redirect.
+- Project contract (CLAUDE.md / AGENTS.md) / `.zeus/features.md` / spec missing → abort, redirect.
 - User authorizes simplification verbally but refuses to log the 4 fields → refuse to ship plan; insist on the log.
 - Multi-stack lens surfaces a risk the user dismisses without engagement → record the risk anyway in Architect Risk Analysis with note "user dismissed".
 - Phase 3 self-review finds contradictions that won't resolve in two iterations → pause and ask user.
@@ -215,7 +215,7 @@ For stacks not in the table, generate the equivalent checklist at runtime: "what
 
 ## Integration
 
-- **Predecessor:** `zeus:brainstorming` (spec must exist) or `zeus:kickoff-feature-list` (FEATURES.md must exist).
+- **Predecessor:** `zeus:brainstorming` (spec must exist) or `zeus:kickoff-feature-list` (.zeus/features.md must exist).
 - **Successor:** SP4's `zeus:executing-plans` or `zeus:subagent-driven-development` (forward references; not yet landed).
 - **References:** `references/karpathy-principles.md` — Simplicity First and Surgical Changes apply to every plan task this skill produces.
 - **Gates addressed:** G4 (DoD delta + Logic Completeness Manifest are the contract execution-time gates enforce).

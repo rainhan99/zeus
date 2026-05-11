@@ -1,6 +1,6 @@
 ---
 name: e2e-gate
-description: Use after all implementation tasks are complete to enforce G4 (every DoD item exits 0) and G5 (realistic end-to-end user path runs start to finish). Reads AGENTS.md Definition of Done and the plan's test plan section. No work ships until both phases pass.
+description: Use after all implementation tasks are complete to enforce G4 (every DoD item exits 0) and G5 (realistic end-to-end user path runs start to finish). Reads the project contract's Definition of Done and the plan's test plan section. No work ships until both phases pass.
 gates: [G4, G5]
 layer: 4
 lecture: [L09, L10]
@@ -23,7 +23,7 @@ G4 and G5 are sequential. G4 must pass before G5 runs. If G4 fails, there is no 
 
 ### Phase 1 — G4: DoD sweep
 
-1. **Read AGENTS.md** `## Definition of Done`. Extract every command-verifiable item.
+1. **Read the project contract** per `references/project-contract.md`. Extract every command-verifiable item from its `## Definition of Done` (or from `.zeus/dod.md` if the contract is CLAUDE.md and DoD was placed out-of-tree).
 2. **Run each item** as a fresh command. Capture full stdout and exit code. Use `zeus:verification-before-completion` discipline — no paraphrasing, no "should pass."
 3. **Use ecosystem-standard tools.** If a DoD item says "lint passes," run the real linter (ESLint, Ruff, cargo clippy), not a custom grep.
 4. **Report results.** Table format: item | command | exit code | pass/fail.
@@ -43,7 +43,7 @@ G4 and G5 are sequential. G4 must pass before G5 runs. If G4 fails, there is no 
 
 ```dot
 digraph e2e_gate {
-  read_dod [label="1. Read AGENTS.md\nDoD items", shape=box];
+  read_dod [label="1. Read project\ncontract DoD", shape=box];
   run_dod [label="2-3. Run each item\nfresh, real tools", shape=box];
   report_g4 [label="4. Report G4\nresults", shape=box];
   g4_check [label="5. All exit 0?", shape=diamond];
@@ -90,7 +90,7 @@ DoD items and E2E tests must use the ecosystem's real tools:
 | "I'll skip G4 and go straight to E2E." | G4 must pass before G5. Sequential, not optional. |
 | "E2E failed but it's a flaky test." | Investigate the flakiness. Don't dismiss. Flaky E2E often reveals real integration issues. |
 | "I'll write a quick smoke test instead of real E2E." | Smoke tests don't touch the same surfaces a real user would. Run the real path. |
-| "DoD item is outdated, I'll skip it." | If it's outdated, update AGENTS.md first. Don't skip — fix the contract. |
+| "DoD item is outdated, I'll skip it." | If it's outdated, update the project contract first. Don't skip — fix the contract. |
 
 ## Red flags / Stop conditions
 
@@ -102,7 +102,7 @@ DoD items and E2E tests must use the ecosystem's real tools:
 
 ## Verification checklist
 
-- [ ] AGENTS.md DoD read; all command-verifiable items extracted.
+- [ ] Project contract DoD read per `references/project-contract.md`; all command-verifiable items extracted.
 - [ ] Every DoD item run fresh with full stdout captured.
 - [ ] All DoD items exit 0 (G4 open).
 - [ ] Realistic E2E user path identified (from plan or constructed).

@@ -30,7 +30,7 @@ A branch is clean when all of the following are true:
 | Branch builds | project-specific build command | Exit 0 |
 | Tests pass | project-specific test command | Exit 0 |
 
-The specific directories to scan (`src/`, `lib/`, `app/`) should be adapted to the project. Read `AGENTS.md` for the project's source layout.
+The specific directories to scan (`src/`, `lib/`, `app/`) should be adapted to the project. Read the project contract per `references/project-contract.md` for the project's source layout.
 
 ## Process flow
 
@@ -145,6 +145,6 @@ When staged-but-uncommitted changes exist:
 - **Complement:** `zeus:session-handoff` (handoff writes what to remember, clean-state removes what to forget). Both must pass for G7.
 - **Predecessor:** all implementation and review work is complete.
 - **Successor:** `zeus:finishing-a-development-branch` (SP7) — only runs after G7 closes.
-- **Calls:** project-specific build and test commands from `AGENTS.md`.
+- **Calls:** project-specific build and test commands from the project contract (read per `references/project-contract.md`).
 - **Gates addressed:** G7 (clean side) — clean working tree is one of two requirements for G7 to close.
 - **Defends layer:** 5 (state management).

@@ -69,7 +69,7 @@ tags: [runlog, sp7]
 | Section | Purpose | Source |
 |---------|---------|--------|
 | **Gate Status** | Which gates passed, failed, or were skipped | Agent's own tracking through the 7-gate cascade |
-| **Features Touched** | Per-feature attribution from FEATURES.md | Cross-reference changed files against FEATURES.md feature scope |
+| **Features Touched** | Per-feature attribution from .zeus/features.md | Cross-reference changed files against .zeus/features.md feature scope |
 | **Session Metrics** | Quantitative summary | `git log --oneline`, `git diff --stat`, commit timestamps |
 
 ## Optional sections
@@ -84,7 +84,7 @@ tags: [runlog, sp7]
 
 1. **COLLECT GATE STATUS** — Walk through G1-G7. For each gate, record PASS / FAIL / SKIP and a one-line evidence summary. Do not paste full output — summarize.
 
-2. **ATTRIBUTE FEATURES** — Read `FEATURES.md` if present. Cross-reference `git diff --stat` against feature scope to determine which features were touched. If no FEATURES.md exists, list changed directories instead.
+2. **ATTRIBUTE FEATURES** — Read `.zeus/features.md` if present. Cross-reference `git diff --stat` against feature scope to determine which features were touched. If no .zeus/features.md exists, list changed directories instead.
 
 3. **GATHER METRICS** — Run `git log --oneline` and `git diff --stat` for the session's commit range. Extract commit count, file count, timestamps.
 
@@ -129,7 +129,7 @@ SKIP is not failure — it means the gate was not applicable to this session's s
 | "The git log is enough observability." | Git log shows commits, not gate status, feature attribution, or anomalies. Write the run log. |
 | "This was a small session, no run log needed." | Small sessions still need audit trails. The run log takes 2 minutes. |
 | "I'll mark all gates as PASS." | Only mark PASS if evidence exists. SKIP is honest. False PASS is worse than no log. |
-| "Feature attribution is too much work." | `git diff --stat` + FEATURES.md cross-reference takes 30 seconds. |
+| "Feature attribution is too much work." | `git diff --stat` + .zeus/features.md cross-reference takes 30 seconds. |
 | "Nobody reads run logs." | The next session-init reads them. Future you reads them. Write it. |
 
 ## Red flags / Stop conditions
@@ -153,7 +153,7 @@ SKIP is not failure — it means the gate was not applicable to this session's s
 ## Integration
 
 - **Complement:** `zeus:session-handoff` (narrative) + `zeus:clean-state` (cleanup). All three must pass for G7.
-- **Reads:** `FEATURES.md` (from `zeus:kickoff-feature-list`) for per-feature attribution.
+- **Reads:** `.zeus/features.md` (from `zeus:kickoff-feature-list`) for per-feature attribution.
 - **Calls:** `zeus:memory-management` for run log writes and compression.
 - **Consumed by:** `zeus:session-init` in the next session (run logs provide historical context).
 - **Gates addressed:** G7 (audit side) — run log is one of three requirementr G7 to close.

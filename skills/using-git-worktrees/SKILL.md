@@ -17,7 +17,7 @@ L06's argument: initialization needs its own phase — jumping straight into cod
 
 1. **Directory selection.** Follow this priority order:
    a. Check existing directories: `ls -d .worktrees 2>/dev/null` then `ls -d worktrees 2>/dev/null`. If both exist, `.worktrees` wins.
-   b. Check CLAUDE.md or AGENTS.md for a worktree directory preference: `grep -i 'worktree.*director' CLAUDE.md AGENTS.md 2>/dev/null`. If found, use it.
+   b. Check the project contract (`CLAUDE.md` or `AGENTS.md` per `references/project-contract.md`) for a worktree directory preference: `grep -i 'worktree.*director' CLAUDE.md AGENTS.md 2>/dev/null`. If found, use it.
    c. Ask the user:
    ```
    No worktree directory found. Where should I create worktrees?
@@ -67,9 +67,9 @@ L06's argument: initialization needs its own phase — jumping straight into cod
 
    If no marker file is found, skip dependency installation.
 
-6. **Run baseline tests.** Read AGENTS.md `## Commands` for the project's test command. Run it using the project's real test runner — never a hand-rolled smoke script.
+6. **Run baseline tests.** Read the project contract's `## Commands` (per `references/project-contract.md`) for the project's test command. Run it using the project's real test runner — never a hand-rolled smoke script.
    ```bash
-   # Use whatever AGENTS.md specifies, e.g.:
+   # Use whatever the project contract specifies, e.g.:
    npm test          # Node.js
    cargo test        # Rust
    pytest            # Python
@@ -116,11 +116,11 @@ digraph worktree_setup {
 | `.worktrees/` exists | Use it (verify ignored) |
 | `worktrees/` exists | Use it (verify ignored) |
 | Both exist | Use `.worktrees/` |
-| Neither exists | Check CLAUDE.md / AGENTS.md → ask user |
+| Neither exists | Check project contract (CLAUDE.md / AGENTS.md) → ask user |
 | Directory not ignored | Add to .gitignore, commit, proceed |
 | Tests fail during baseline | Report failures, ask user |
 | No package.json / Cargo.toml / etc. | Skip dependency install |
-| AGENTS.md has no test command | Ask user for the test command |
+| Project contract has no test command | Ask user for the test command |
 
 ## Anti-rationalization table
 
@@ -128,7 +128,7 @@ digraph worktree_setup {
 |---------|---------|
 | "I'll skip the ignore check, it's probably fine." | Worktree contents accidentally tracked polluttatus and can end up committed. Always check. |
 | "I'll skip baseline tests, they'll pass." | If they don't pass, you can't distinguish new bugs from pre-existing ones. Always run. |
-| "I'll just run `node index.js` to verify the setup." | Use the project's real test runner from AGENTS.md. A quick smoke test is not a baseline. |
+| "I'll just run `node index.js` to verify the setup." | Use the project's real test runner from the project contract. A quick smoke test is not a baseline. |
 | "I know the directory convention, no need to check." | Projects evolve. Follow the priority chain every time. |
 | "Tests are slow, I'll skip them to save time." | A broken baseline costs more time than a slow test run. Run them. |
 | "I'll create the worktree on main instead of a feature branch." | Worktrees are for isolation. a feature branch. |
@@ -143,11 +143,11 @@ digraph worktree_setup {
 
 ## Verification checklist
 
-- [ ] Directory selected following priority chain (existing > CLAUDE.md/AGENTS.md > ask user).
+- [ ] Directory selected following priority chain (existing > project contract > ask user).
 - [ ] Project-local directory verified as gitignored (or fixed and committed).
 - [ ] Worktree created on a feature branch (not main/master).
 - [ ] Project setup auto-detected and run (or skipped if no marker file).
-- [ ] Baseline tests run using the project's real test runner from AGENTS.md.
+- [ ] Baseline tests run using the project's real test runner from the project contract (per `references/project-contract.md`).
 - [ ] Test results reported to user (pass count, fail count).
 - [ ] Worktree location reported with full path.
 

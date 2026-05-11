@@ -18,7 +18,7 @@ When a user describes something too big to fit in a single brainstorming spec, t
 ### Phase 0 — Anchor
 
 1. `cat AGENTS.md` if present.
-2. `cat FEATURES.md` if present.
+2. `cat .zeus/features.md` if present.
 3. Have the user describe the big thing in one paragraph.
 
 ### Phase 1 — First-cut decomposition
@@ -52,7 +52,7 @@ Show map + concerns to the user. User can: combine subs, split, reorder, remove,
 
 #### Phase 4a: Try single-file write
 
-Target: `docs/specs/<YYYY-MM-DD>-<topic>-decomposition.md`. Single attempt.
+Target: `.zeus/specs/<YYYY-MM-DD>-<topic>-decomposition.md`. Single attempt.
 
 #### Phase 4b: Fallback to multi-file
 
@@ -69,7 +69,7 @@ On trigger, the agent says explicitly: "Single-file write failed (or pre-emptive
 New layout:
 
 ```
-docs/specs/<YYYY-MM-DD>-<topic>-decomposition/
+.zeus/specs/<YYYY-MM-DD>-<topic>-decomposition/
 ├── README.md          ← top-level: table + dep graph + execution order + architect concerns
 ├── SP-A1.md           ← one file per sub-project
 ├── SP-A2.md
@@ -86,9 +86,9 @@ docs/specs/<YYYY-MM-DD>-<topic>-decomposition/
 - Dependency graph is a DAG (topological sort succeeds).
 - At least one foundation sub (no `Depends on`) exists.
 
-#### Phase 4d: FEATURES.md propagation
+#### Phase 4d: .zeus/features.md propagation
 
-If `FEATURES.md` exists, propose adding each sub as an `F-NNN` entry (status `planned`, dependsOn edges as features). User confirms each.
+If `.zeus/features.md` exists, propose adding each sub as an `F-NNN` entry (status `planned`, dependsOn edges as features). User confirms each.
 
 #### Phase 4e: Handoff
 
@@ -103,7 +103,7 @@ digraph decompose {
   lock4a [label="4a. Try single-file write", shape=box];
   fallback [label="4b. Multi-file fallback", shape=box];
   verify [label="4c. Verify", shape=diamond];
-  features [label="4d. FEATURES.md propagation", shape=box];
+  features [label="4d. .zeus/features.md propagation", shape=box];
   handoff [label="4e. Handoff to brainstorming", shape=doublecircle];
 
   anchor -> cut;

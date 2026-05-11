@@ -29,7 +29,7 @@ Implement fresh from tests. Period.
 ## Process flow
 
 1. **RED** — Write one minimal failing test showing what should happen. One behavior per test. Clear name describing the behavior.
-2. **Run test** — Execute the project's real test runner (from AGENTS.md `## Commands`). Capture full terminal output showing FAIL.
+2. **Run test** — Execute the project's real test runner (from the project contract's `## Commands` — read it via `references/project-contract.md`). Capture full terminal output showing FAIL.
 3. **Verify RED** — Confirm: test fails (not errors), failure message is expected, fails because the feature is missing (not typos or import errors). If the test passes immediately, the test is wrong — fix it.
 4. **GREEN** — Write the simplest code that makes the test pass. Nothing more.
 5. **Run test** — Execute the same test runner. Capture full terminal output showing PASS.
@@ -149,7 +149,7 @@ For stacks not in the table, identify the ecosystem's standard tools before writ
 - [ ] Output is clean (no errors, no warnings).
 - [ ] Tests use real code (mocks only when unavoidable — external APIs, time, randomness).
 - [ ] Edge cases and error paths covered.
-- [ ] Used the project's real test runner from AGENTS.md, not a custom script.
+- [ ] Used the project's real test runner from the project contract, not a custom script.
 
 ## Integration
 

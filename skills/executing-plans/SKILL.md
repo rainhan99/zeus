@@ -45,7 +45,7 @@ The plan must contain the footer signature `**User-approved:** <timestamp> by <u
 
 1. **Read plan file.** Verify the `**User-approved:**` footer exists. If missing, refuse: "This plan has no approval signature. Run `zeus:writing-plans` Phase 4 to get user approval first." Then verify the plan references a brainstorming spec (Section 1 or header). If the spec file is missing or incomplete (lacks all 6 sections), refuse: "Plan references spec at `<path>`, but spec is missing or incomplete. Run `zeus:brainstorming` first."
 2. **Check subagent availability.** If the platform supports subagents (Claude Code Agent tool, Codex subagent, etc.), suggest: "Subagents are available. Consider `zeus:subagent-driven-development` for higher quality (two-stage review per task). Continue with sequential execution? [y/n]" Proceed only after the user confirms.
-3. **Read AGENTS.md.** Extract Definition of Done items, Commands, Conventions (including file-size thresholds), and Invariants.
+3. **Read the project contract** per `references/project-contract.md`. Extract Definition of Done items, Commands, Conventions (including file-size thresholds), and Invariants.
 4. **Read Logic Completeness Manifest** (plan Section 9). Note any authorized simplifications. Everything else must be implemented in full.
 5. **Create task list** from plan Section 4 (Tasks). One task per plan task, in order.
 6. **Per-task execution loop:**
@@ -55,14 +55,14 @@ The plan must contain the footer signature `**User-approved:** <timestamp> by <u
    d. Check: did this task introduce unauthorized simplificate against the Manifest. Any TODO / stub / mock-as-final not logged in the Manifest is a violation — fix before proceeding.
    e. If verification fails: retry up to 3 times with different approaches. After 3 failures, escalate to `zeus:brainstorming` to question the architecture. Do not force through.
    f. Mark task completed.
-7. **Full DoD run (G4).** After all tasks complete, run every command-verifiable item in AGENTS.md `## Definition of Done`. Capture each exit code. All must exit 0.
+7. **Full DoD run (G4).** After all tasks complete, run every command-verifiable item in the project contract's `## Definition of Done` (or `.zeus/dod.md` if the contract is CLAUDE.md and DoD was placed out-of-tree). Capture each exit code. All must exit 0.
 8. **Hand off** to `zeus:finishing-a-development-branch` (SP7). Until SP7 lands, present merge options inline: merge locally / push PR / keep branch / discard.
 
 ```dot
 digraph executing_plans {
   read [label="1. Read plan\nverify footer", shape=box];
   subagent [label="2. Subagent check\nsuggest switch?", shape=diamond];
-  agents_md [label="3. Read AGENTS.md", shape=box];
+  agents_md [label="3. Read project contract", shape=box];
   manifest [label="4. Read Manifest", shape=box];
   tasks [label="5. Create task list", shape=box];
   loop [label="6. Per-task loop\nTDD + verify + Manifest", shape=box];
@@ -125,7 +125,7 @@ If tempted to write a quick grep or shell one-liner instead of running the real 
 ## Verification checklist
 
 - [ ] Plan footer signaturerified before first task.
-- [ ] AGENTS.md read; DoD items extracted.
+- [ ] Project contract read per `references/project-contract.md`; DoD items extracted.
 - [ ] Logic Completeness Manifest read; authorized simplifications noted.
 - [ ] Every task followed TDD (G2 evidence: FAIL then PASS in context).
 - [ ] Every task's verification command run fresh with full stdout captured (G3).

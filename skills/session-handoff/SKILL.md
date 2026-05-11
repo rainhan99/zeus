@@ -116,7 +116,7 @@ digraph handoff {
 - Full code listings — the code is in git.
 - Detailed debugging logs — summarize the conclusion, not the journey.
 - Emotional commentary ("this was frustrating") — stick to facts.
-- Information already in AGENTS.md or FEATURES.md — do not duplicate project-level docs.
+- Information already in the project contract (CLAUDE.md / AGENTS.md) or `.zeus/features.md` — do not duplicate project-level docs.
 
 The handoff is a bridge between sessions, not a project document. Keep it focused on what the next session needs to know that it cannot derive from reading the code and project docs.
 

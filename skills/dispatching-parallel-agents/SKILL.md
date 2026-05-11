@@ -37,7 +37,7 @@ L07's argument: agents overreach and under-finish — they try to hold too many 
 5. **Integration — when agents return:**
    a. **Read each summary.** Understand what each agent found and changed.
    b. **Conflict detection.** Check for overlapping file edits across agents. If two agents edited the same file, resolve manually before proceeding.
-   c. **Run full test suite (G3).** Fresh verification of the entire codebase — not just each agent's scope. Use the project's real test runner from AGENTS.md Commands.
+   c. **Run full test suite (G3).** Fresh verification of the entire codebase — not just each agent's scope. Use the project's real test runner from the project contract's Commands section (read it per `references/project-contract.md`).
    d. **Spot check.** Agents can make systematic errors. Review the actual changes, not just the summaries.
    e. **Integrate.** If all checks pass, the parallel work is complete.
 
