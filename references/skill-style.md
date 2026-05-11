@@ -44,8 +44,13 @@ Sections appear in this order. Omit any section that doesn't apply, but never re
 
 Each skill should include at least one concrete example showing the skill being applied. Examples live inside the relevant body section (typically Process flow or Verification checklist), not in a separate "Examples" section. Inline examples teach faster than abstract descriptions.
 
+## Contract-reading rule
+
+Every skill that reads the project's binding contract MUST follow `references/project-contract.md`. Do not hard-code `AGENTS.md` or `CLAUDE.md` paths in skill checklists, prose, bash snippets, or dot diagrams — delegate to the protocol. The protocol defines the precedence chain (CLAUDE.md → AGENTS.md → kickoff prompt), the section-extraction conventions, and a copy-paste bash helper. Skills that hard-code a single file name will drift away from the contract and break for projects that picked the other convention.
+
 ## Cross-references
 
 - 12 lectures → `references/twelve-lectures.md`
 - 5-layer defense taxonomy → `references/five-layers.md`
 - 7-gate completion cascade → `references/seven-gates.md`
+- Project contract precedence → `references/project-contract.md`
