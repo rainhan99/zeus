@@ -21,33 +21,40 @@ If the user proposes a narrative item, push back. Ask "How would I verify that p
 
 ## Process flow
 
-1. **Precondition check.** If `AGENTS.md` doesn't exist at project root, abort with: "Run `zeus:kickoff-agents-md` first to create AGENTS.md."
+1. **Precondition check.** Run the precedence-chain protocol from `references/project-contract.md` to resolve the project contract file. Abort with redirect to `zeus:kickoff-agents-md` ONLY if NEITHER `CLAUDE.md` nor `AGENTS.md` exists at project root. If either is present, continue — that file is the contract.
 2. **Detect candidate commands.** Scan the signals in the table below. Each yields zero or more candidate commands.
-3. **Read existing DoD section.** If non-empty (amend mode), parse current items.
+3. **Read existing DoD section.** Read the contract file's `## Definition of Done` section. If non-empty (amend mode), parse current items.
 4. **Classify (amend mode).** UNCHANGED if existing item maps to a detected command and runs successfully; DRIFT if existing item is broken (non-zero or "command not found"); NEW if detection found a command not in DoD yet.
 5. **Interview thresholds.** For each candidate (and DRIFT and NEW), ask the user: "Include this in DoD?" Then thresholds (coverage %, perf budgets) where applicable.
-6. **Write DoD section.** Replace the `## Definition of Done` section in AGENTS.md with the new list, keeping all other sections intact.
-7. **Validate items run.** Execute each DoD command in a smoke run. If any fail, surface to the user; do not silently strip them.
-8. **Handoff.** Tell the user: "DoD locked. Run `zeus:kickoff-feature-list` next to set up the project's feature roadmap."
+6. **Choose DoD write target.** Determine where the DoD list will live:
+   - **Contract = AGENTS.md** → write inline into `AGENTS.md` `## Definition of Done` section (existing behavior; no interview needed).
+   - **Contract = CLAUDE.md** → ask the user exactly once: "Where should the DoD live? [1] CLAUDE.md (inline) [2] .zeus/dod.md (out-of-tree, default)". Default is `[2]` when the user just hits enter, because CLAUDE.md is conventionally kept terse.
+     - Answer `[1]` → append/update `## Definition of Done` inline in `CLAUDE.md`.
+     - Answer `[2]` (or default) → write the DoD list to `.zeus/dod.md`, AND ensure `CLAUDE.md` contains a one-line pointer: ``Definition of Done lives in `.zeus/dod.md` — see that file for the binding G4 contract.`` Insert the pointer under a `## Definition of Done` heading in CLAUDE.md so section-extraction protocols still find it.
+7. **Write DoD section.** Apply the write determined in step 6, keeping all other sections of the contract file intact.
+8. **Validate items run.** Execute each DoD command in a smoke run. If any fail, surface to the user; do not silently strip them.
+9. **Handoff.** Tell the user: "DoD locked. Run `zeus:kickoff-feature-list` next to set up the project's feature roadmap."
 
 ```dot
 digraph kickoff_dod {
-  precheck [label="1. AGENTS.md exists?", shape=diamond];
+  precheck [label="1. Contract file exists?\n(CLAUDE.md or AGENTS.md)", shape=diamond];
   abort [label="Abort: run kickoff-agents-md", shape=box];
   detect [label="2. Detect candidate commands", shape=box];
-  read [label="3. Read existing DoD section", shape=box];
+  read [label="3. Read existing DoD section\nfrom contract file", shape=box];
   classify [label="4. Classify (amend mode)", shape=box];
   interview [label="5. Interview thresholds", shape=box];
-  write [label="6. Write DoD section", shape=box];
-  validate [label="7. Validate items run", shape=diamond];
-  handoff [label="8. Handoff to kickoff-feature-list", shape=doublecircle];
+  choose [label="6. Choose DoD write target\n(AGENTS.md / CLAUDE.md / .zeus/dod.md)", shape=diamond];
+  write [label="7. Write DoD section", shape=box];
+  validate [label="8. Validate items run", shape=diamond];
+  handoff [label="9. Handoff to kickoff-feature-list", shape=doublecircle];
 
-  precheck -> abort [label="no"];
-  precheck -> detect [label="yes"];
+  precheck -> abort [label="neither"];
+  precheck -> detect [label="present"];
   detect -> read;
   read -> classify;
   classify -> interview;
-  interview -> write;
+  interview -> choose;
+  choose -> write;
   write -> validate;
   validate -> handoff [label="all ok"];
   validate -> interview [label="some failed"];
@@ -94,8 +101,8 @@ Then ask once more: "Anything else? (e.g., 'OpenAPI spec regenerated', 'database
 
 ## Red flags / Stop conditions
 
-- AGENTS.md missing → abort, redirect to `zeus:kickoff-agents-md`.
-- AGENTS.md `## Commands` section empty AND no manifest signals detected. The project doesn't have any verifiable commands. Tell the user: "This project has no command-runnable verification. Either add some to your tooling, or AGENTS.md DoD will be empty (and G4 will be impossible)."
+- Both `CLAUDE.md` and `AGENTS.md` missing → abort, redirect to `zeus:kickoff-agents-md`. (Either file alone is sufficient; precedence chain handles the choice.)
+- Contract file's `## Commands` section empty AND no manifest signals detected. The project doesn't have any verifiable commands. Tell the user: "This project has no command-runnable verification. Either add some to your tooling, or the DoD will be empty (and G4 will be impossible)."
 - User wants to add a narrative item ("the design looks clean"). Refuse with the Iron Law explanation.
 - Validation phase 7 finds many items broken. Don't write them anyway. Pause and ask the user how to proceed.
 
@@ -103,8 +110,8 @@ Then ask once more: "Anything else? (e.g., 'OpenAPI spec regenerated', 'database
 
 After writing the DoD section, all of these must hold:
 
-- DoD section exists: `grep -q '^## Definition of Done$' AGENTS.md`
-- At least one checkbox item: `[ "$(awk '/^## Definition of Done$/,/^## /' AGENTS.md | grep -c '^- \[ \]')" -ge 1 ]`
+- DoD location pointer or section exists in the chosen contract file: `grep -q '^## Definition of Done$' <contract>` where `<contract>` is `CLAUDE.md` or `AGENTS.md` (the file resolved by the precedence chain). When the DoD lives in `.zeus/dod.md`, the contract file's `## Definition of Done` section contains the one-line pointer to that file.
+- At least one checkbox item in the DoD body. Where the DoD lives inline: `[ "$(awk '/^## Definition of Done$/,/^## /' <contract> | grep -c '^- \[ \]')" -ge 1 ]`. Where the DoD lives in `.zeus/dod.md`: `[ "$(grep -c '^- \[ \]' .zeus/dod.md)" -ge 1 ]`.
 - Every item starts with a backtick-fenced command (manual review acceptable; not a hard regex check because some items wrap commands in prose).
 - Smoke run of every command exits 0 in the project's current state. (If any fail, the agent must surface, not hide.)
 
