@@ -99,6 +99,17 @@ zeus/
 └── templates/           # boilerplate for kickoff-agents-md
 ```
 
+## Upgrading from pre-relocation zeus
+
+If you're upgrading from a zeus version that wrote artifacts under `docs/specs/`, `docs/plans/`, or kept `FEATURES.md` at the project root, run the one-shot migration once per project:
+
+```bash
+bash scripts/migrate-to-dotzeus.sh
+git commit -m "chore: migrate zeus artifacts to .zeus/"
+```
+
+The script is idempotent — re-running it after the move is a no-op. It uses `git mv` to preserve history. After migration, all plugin-generated artifacts live under `.zeus/` (`.zeus/specs/`, `.zeus/plans/`, `.zeus/features.md`, `.zeus/memory/`, `.zeus/state/`). The only zeus-related files at the project root are your `CLAUDE.md` or `AGENTS.md` contract.
+
 ## License
 
 MIT — see `LICENSE`.
