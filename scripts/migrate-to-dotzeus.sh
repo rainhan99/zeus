@@ -36,12 +36,24 @@ for d in docs/specs docs/plans; do
   fi
 done
 
-# 3. Affected source paths must be clean in git (no uncommitted changes).
-DIRTY="$(git status --porcelain -- docs/specs docs/plans FEATURES.md 2>/dev/null || true)"
-if [ -n "$DIRTY" ]; then
-  echo "ERROR: uncommitted changes in source paths. Commit or stash first." >&2
-  echo "$DIRTY" >&2
-  exit 1
+# 3. Decide which sources still exist. If none, we're already migrated — exit cleanly.
+SOURCES_THAT_EXIST=()
+[ -d docs/specs ] && [ -n "$(ls -A docs/specs 2>/dev/null)" ] && SOURCES_THAT_EXIST+=("docs/specs")
+[ -d docs/plans ] && [ -n "$(ls -A docs/plans 2>/dev/null)" ] && SOURCES_THAT_EXIST+=("docs/plans")
+[ -f FEATURES.md ] && SOURCES_THAT_EXIST+=("FEATURES.md")
+
+if [ "${#SOURCES_THAT_EXIST[@]}" -eq 0 ]; then
+  echo "Nothing to migrate — repo is already at the .zeus/ layout."
+  # Still fall through to the sed pass: cross-references may need rewriting
+  # even if file moves were already committed by a previous run.
+else
+  # Only the surviving sources must be clean (renames from a previous staged run are OK).
+  DIRTY="$(git status --porcelain -- "${SOURCES_THAT_EXIST[@]}" 2>/dev/null | grep -v '^R ' || true)"
+  if [ -n "$DIRTY" ]; then
+    echo "ERROR: uncommitted changes in source paths. Commit or stash first." >&2
+    echo "$DIRTY" >&2
+    exit 1
+  fi
 fi
 
 # ---------- Migration ----------
@@ -84,15 +96,20 @@ fi
 TMPFILE="$(mktemp)"
 trap 'rm -f "$TMPFILE"' EXIT
 
+REWRITTEN_FILES=()
+
 rewrite_refs() {
   local file="$1"
+  # Use comma as the FEATURES.md delimiter so the inner `|` alternation
+  # doesn't collide with BSD sed's delimiter parser on darwin.
   sed -E \
     -e 's|docs/specs/|.zeus/specs/|g' \
     -e 's|docs/plans/|.zeus/plans/|g' \
-    -e 's|(^|[^./a-zA-Z0-9_-])FEATURES\.md|\1.zeus/features.md|g' \
+    -e 's,(^|[^./a-zA-Z0-9_-])FEATURES\.md,\1.zeus/features.md,g' \
     "$file" > "$TMPFILE"
   if ! cmp -s "$file" "$TMPFILE"; then
     cp "$TMPFILE" "$file"
+    REWRITTEN_FILES+=("$file")
     echo "  rewrote refs in $file"
   fi
 }
@@ -106,8 +123,11 @@ while IFS= read -r -d '' file; do
   rewrite_refs "$file"
 done < <(find skills references templates -type f -name '*.md' -print0 2>/dev/null)
 
-# Stage rewrites alongside the moves.
-git add -u skills references templates 2>/dev/null || true
+# Stage only the files we actually rewrote. Avoids the "pathspec did not match"
+# failure when some directories have no tracked files.
+if [ "${#REWRITTEN_FILES[@]}" -gt 0 ]; then
+  git add -- "${REWRITTEN_FILES[@]}"
+fi
 
 # ---------- Report ----------
 
