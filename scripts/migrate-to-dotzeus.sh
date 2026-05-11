@@ -60,6 +60,18 @@ fi
 
 mkdir -p .zeus/specs .zeus/plans
 
+# Move helper: uses `git mv` when source is tracked (preserves history),
+# falls back to plain `mv` when source is untracked or gitignored. This
+# lets projects that gitignore zeus's working artifacts still migrate.
+move_file() {
+  local src="$1" dest="$2"
+  if git ls-files --error-unmatch -- "$src" >/dev/null 2>&1; then
+    git mv "$src" "$dest"
+  else
+    mv "$src" "$dest"
+  fi
+}
+
 migrate_dir() {
   # $1 source dir (e.g., docs/specs)
   # $2 dest dir (e.g., .zeus/specs)
@@ -67,7 +79,7 @@ migrate_dir() {
   if [ -d "$src" ]; then
     for f in "$src"/*; do
       [ -e "$f" ] || continue
-      git mv "$f" "$dest/$(basename "$f")"
+      move_file "$f" "$dest/$(basename "$f")"
       moved=$((moved + 1))
     done
     # Remove now-empty source dir (safe — only removes if empty).
@@ -86,7 +98,7 @@ rmdir docs 2>/dev/null || true
 
 # FEATURES.md -> .zeus/features.md (idempotent).
 if [ -f "FEATURES.md" ]; then
-  git mv "FEATURES.md" ".zeus/features.md"
+  move_file "FEATURES.md" ".zeus/features.md"
   echo "  moved FEATURES.md -> .zeus/features.md"
 fi
 
