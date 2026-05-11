@@ -1,6 +1,6 @@
 ---
 name: kickoff-definition-of-done
-description: Use when AGENTS.md exists but its `## Definition of Done` section is empty, vague, or out of date. Builds a list of command-verifiable conditions (each must return exit code 0) by scanning available commands and interviewing the user for thresholds (coverage %, performance budgets, accepted lint rules). Locks the result as the binding G4 contract.
+description: Use when the project contract (CLAUDE.md or AGENTS.md per the precedence chain) exists but its `## Definition of Done` section is empty, vague, or out of date — or when an out-of-tree `.zeus/dod.md` needs initial population. Builds a list of command-verifiable conditions (each must return exit code 0) by scanning available commands and interviewing the user for thresholds (coverage %, performance budgets, accepted lint rules). Locks the result as the binding G4 contract.
 gates: [G4]
 layer: 4
 lecture: [L09]

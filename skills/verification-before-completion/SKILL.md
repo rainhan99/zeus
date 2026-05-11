@@ -21,7 +21,7 @@ If you haven't run the verification command in this message, you cannot claim it
 
 ## Process flow
 
-1. **IDENTIFY** — What command proves this claim? Every claim maps to a specific command. "Tests pass" → the test runner. "Build succeeds" → the build command. "Lint clean" → the linter. Use the project's real ecosystem tools from AGENTS.md Commands — never a custom script.
+1. **IDENTIFY** — What command proves this claim? Every claim maps to a specific command. "Tests pass" → the test runner. "Build succeeds" → the build command. "Lint clean" → the linter. Use the project's real ecosystem tools from the project contract's `## Commands` (read per `references/project-contract.md`) — never a custom script.
 
 2. **RUN** — Execute the full command. Fresh. Complete. Not a partial run, not a cached result, not "I ran it earlier."
 

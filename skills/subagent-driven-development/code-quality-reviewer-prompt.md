@@ -21,7 +21,8 @@ Task tool (code-reviewer or general-purpose):
 
     ## Project Conventions
 
-    [Relevant excerpts from AGENTS.md: conventions, file-size thresholds]
+    [Relevant excerpts from the project contract (CLAUDE.md / AGENTS.md per
+    `references/project-contract.md`): conventions, file-size thresholds]
 
     File size conventions:
     | Scenario                       | Recommended    |
@@ -67,7 +68,7 @@ Task tool (code-reviewer or general-purpose):
 
     **Patterns and consistency:**
     - Follows existing codebase patterns
-    - Consistent with project conventions from AGENTS.md
+    - Consistent with project conventions from the project contract
     - No unnecessary divergence from established approaches
 
     ## Issue Severity

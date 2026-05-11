@@ -126,20 +126,28 @@ rewrite_refs() {
   fi
 }
 
-# Scan markdown under skill/reference/template trees. Skip this script itself
-# (it intentionally mentions the legacy paths in its docstring).
+# Scan markdown under skill / reference / template trees AND under the
+# migrated .zeus/specs/ and .zeus/plans/ directories themselves — plans
+# cross-reference specs by path, and end-user projects need those
+# internal links rewritten too. Skip this script itself (it intentionally
+# mentions the legacy paths in its docstring).
 while IFS= read -r -d '' file; do
   case "$file" in
     *scripts/migrate-to-dotzeus.sh) continue ;;
   esac
   rewrite_refs "$file"
-done < <(find skills references templates -type f -name '*.md' -print0 2>/dev/null)
+done < <(find skills references templates .zeus/specs .zeus/plans -type f -name '*.md' -print0 2>/dev/null)
 
-# Stage only the files we actually rewrote. Avoids the "pathspec did not match"
-# failure when some directories have no tracked files.
-if [ "${#REWRITTEN_FILES[@]}" -gt 0 ]; then
-  git add -- "${REWRITTEN_FILES[@]}"
-fi
+# Stage only the rewritten files that git actually tracks. Files inside
+# .zeus/ may be gitignored (especially in projects like zeus itself that
+# keep dogfooding artifacts local) — `git add` on those would fail under
+# set -e. The rewrites still happen on disk; they just don't enter the
+# index for ignored paths.
+for f in "${REWRITTEN_FILES[@]}"; do
+  if git ls-files --error-unmatch -- "$f" >/dev/null 2>&1; then
+    git add -- "$f"
+  fi
+done
 
 # ---------- Report ----------
 

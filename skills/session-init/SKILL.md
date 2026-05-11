@@ -38,15 +38,14 @@ L06 argued that initialization needs its own phase because agents that skip it w
    - Active lessons (user corrections to honor).
    - Last handoff summary (where we left off).
    - Key decisions still in effect.
-   - DoD from AGENTS.md.
+   - DoD from the project contract (or `.zeus/dod.md` if out-of-tree).
 
 8. **READY** — Initialization complete. The agent may now proceed to the user's request.
 
 ```dot
 digraph session_init {
-  agents_md [label="1a. READ\nAGENTS.md?", shape=diamond];
-  claude_md [label="1b. Fallback\nCLAUDE.md?", shape=diamond];
-  suggest_kickoff [label="1c. Suggest\nkickoff-agents-md", shape=box];
+  contract [label="1. READ project\ncontract?", shape=diamond];
+  suggest_kickoff [label="1a. Suggest\nkickoff-agents-md", shape=box];
   features [label="2. READ\n.zeus/features.md", shape=box];
   detect [label="3. DETECT\n.zeus/memory/?", shape=diamond];
   create_mem [label="Create directory\ntree + index.md", shape=box];
@@ -56,10 +55,8 @@ digraph session_init {
   surface [label="7. SURFACE\nstructured context", shape=box];
   ready [label="8. READY", shape=doublecircle];
 
-  agents_md -> features [label="found"];
-  agents_md -> claude_md [label="missing"];
-  claude_md -> features [label="found\n(partial contract)"];
-  claude_md -> suggest_kickoff [label="missing"];
+  contract -> features [label="found"];
+  contract -> suggest_kickoff [label="neither file"];
   suggest_kickoff -> features;
   features -> detect;
   detect -> create_mem [label="missing"];
@@ -111,21 +108,21 @@ These are not suggestions. They are corrections the user has already made. Viola
 |---------|---------|
 | "I know this project, skip init." | You have zero context from prior sessions. Read the memory. |
 | "Lessons are just guidelines." | Lessons are user corrections. Violating them is a repeat failure. |
-| "I'll read AGENTS.md later if needed." | AGENTS.md is the completion contract. Read it first, not when you're stuck. |
+| "I'll read the project contract later if needed." | The project contract (CLAUDE.md / AGENTS.md per the precedence chain) is the completion contract. Read it first, not when you're stuck. |
 | "No handoff exists, so nothing to restore." | Correct — proceed without. But do not skip the check. |
 | "Memory loading is slow, skip it." | Memory loading is budgeted. It costs a fixed token amount. Always load. |
 
 ## Red flags / Stop conditions
 
-- About to start work without reading AGENTS.md → stop, read it first.
+- About to start work without reading the project contract → stop, read it first per `references/project-contract.md`.
 - About to start work without loading lessons → stop, lessons are mandatory.
 - Memory budget exceeded during loading → stop, follow budget-control rules from `memory-management`.
 - `.zeus/memory/` exists but `index.md` is missing or corrupt → stop, rebuild index from directory contents.
 
 ## Verification checklist
 
-- [ ] `AGENTS.md` read, or `CLAUDE.md` fallback used, or absence noted with suggestion to create.
-- [ ] When using CLAUDE.md fallback, content mapped to zeus concepts (commands, conventions, DoD candidates).
+- [ ] Project contract read per `references/project-contract.md` (CLAUDE.md or AGENTS.md selected by the precedence chain), or absence noted with suggestion to create.
+- [ ] Selected contract's sections (Tech Stack, Commands, Conventions, DoD, Invariants) extracted; missing sections noted for downstream skills.
 - [ ] `.zeus/features.md` read if present.
 - [ ] `.zeus/memory/` exists (created if first session).
 - [ ] All lessons loaded in full.
@@ -137,7 +134,7 @@ These are not suggestions. They are corrections the user has already made. Viola
 
 - **Predecessor:** `zeus:using-zeus` (SessionStart hook loads using-zeus, which routes to session-init).
 - **Calls:** `zeus:memory-management` for all memory read operations.
-- **Reads:** `AGENTS.md` (from `zeus:kickoff-agents-md`), `.zeus/features.md` (from `zeus:kickoff-feature-list`).
+- **Reads:** the project contract (`CLAUDE.md` / `AGENTS.md` per `references/project-contract.md`) and `.zeus/features.md` (from `zeus:kickoff-feature-list`).
 - **Consumes:** handoff memos written by `zeus:session-handoff`.
 - **Successor:** user's requested task, routed through `zeus:brainstorming` or direct execution.
 - **Gates addressed:** none directly — session-init is a setup skill, not a gate.

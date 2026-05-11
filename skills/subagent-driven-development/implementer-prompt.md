@@ -19,7 +19,8 @@ Task tool (general-purpose):
 
     ## Project Conventions
 
-    [Relevant excerpts from AGENTS.md: tech stack, conventions, file-size thresholds,
+    [Relevant excerpts from the project contract (CLAUDE.md / AGENTS.md per
+    `references/project-contract.md`): tech stack, conventions, file-size thresholds,
     commands for test/lint/build]
 
     ## Logic Completeness Manifest

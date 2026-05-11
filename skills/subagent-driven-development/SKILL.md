@@ -44,7 +44,7 @@ digraph when_to_use {
 ## Process flow
 
 1. **Read plan file.** Verify `**User-approved:**` footer exists. Refuse without it. Then verify the plan references a brainstorming spec (Section 1 or header). If the spec file is missing or incomplete (lacks all 6 sections), refuse: "Plan references spec at `<path>`, but spec is missing or incomplete. Run `zeus:brainstorming` first."
-2. **Read AGENTS.md** — extract DoD, Commands, Conventions (file-size thresholds), Invariants. **Read Logic Completeness Manifest** (plan Section 9).
+2. **Read the project contract** per `references/project-contract.md` — extract DoD, Commands, Conventions (file-size thresholds), Invariants. **Read Logic Completeness Manifest** (plan Section 9).
 3. **Extract all tasks** with full text from plan Section 4. Create task list. Note inter-task dependencies and context each task needs.
 4. **Per-task execution:**
    a. Dispatch **implementer subagent** (`./implementer-prompt.md`) with full task text + scene-setting context. Do not make the subagent read the plan file — provide everything inline.
@@ -87,7 +87,7 @@ digraph subagent_flow {
   }
 
   read [label="1. Read plan\nverify footer", shape=box];
-  context [label="2. Read AGENTS.md\n+ Manifest", shape=box];
+  context [label="2. Read project\ncontract + Manifest", shape=box];
   extract [label="3. Extract tasks\ncreate list", shape=box];
   final [label="5. Final review\n(entire impl)", shape=box];
   handoff [label="6. Hand off", shape=doublecircle];
@@ -155,7 +155,7 @@ Never ignore an escalation or force the same model to retry without changes.
 ## Verification checklist
 
 - [ ] Plan footer signature verified before first task.
-- [ ] AGENTS.md and Logic Completeness Manifest read.
+- [ ] Project contract (per `references/project-contract.md`) and Logic Completeness Manifest read.
 - [ ] All tasks extracted with full text (subagents never read plan file directly).
 - [ ] Every task went through: implementer → spec review (approved) → quality review (approved).
 - [ ] Spec review always completed before quality review started.

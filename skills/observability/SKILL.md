@@ -115,7 +115,7 @@ digraph observability {
 | G1 | `git diff --stat` shows changes → PASS. No changes → SKIP (nothing was implemented). |
 | G2 | TDD red→green evidence exists in context → PASS. No tests written → SKIP. Tests written but no red→green flip → FAIL. |
 | G3 | Verification command was run fresh with output captured → PASS. Output was paraphrased or not run → FAIL. |
-| G4 | All DoD items from AGENTS.md exit 0 → PASS. Any DoD item fails → FAIL. No AGENTS.md → SKIP. |
+| G4 | All DoD items from the project contract (or `.zeus/dod.md`) exit 0 → PASS. Any DoD item fails → FAIL. No project contract present → SKIP. |
 | G5 | E2E pipeline ran start-to-finish → PASS. No E2E test exists → SKIP. E2E failed → FAIL. |
 | G6 | Two-stage review completed and approved → PASS. Review not requested → SKIP. Review has open Critical/Important → FAIL. |
 | G7 | Run log + handoff memo + clean state all present → PASS. Any missing → FAIL. |

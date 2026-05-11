@@ -17,7 +17,7 @@ When a user describes something too big to fit in a single brainstorming spec, t
 
 ### Phase 0 — Anchor
 
-1. `cat AGENTS.md` if present.
+1. Resolve the project contract per `references/project-contract.md` (CLAUDE.md → AGENTS.md). `cat` the selected file if present.
 2. `cat .zeus/features.md` if present.
 3. Have the user describe the big thing in one paragraph.
 
