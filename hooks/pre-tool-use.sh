@@ -16,10 +16,9 @@ FILE_PATH="$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/n
 CWD="$(printf '%s' "$INPUT" | jq -r '.cwd // ""' 2>/dev/null)"
 PROJECT="${CWD:-${CLAUDE_PROJECT_DIR:-.}}"
 
-# Always allow writes to .zeus/ and docs/specs/
+# Always allow writes to .zeus/ — the plugin's artifact directory.
 case "$FILE_PATH" in
   */.zeus/*|*.zeus/*) exit 0 ;;
-  */docs/specs/*) exit 0 ;;
 esac
 
 # Allow if brainstorming is active or spec is approved
