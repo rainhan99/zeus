@@ -15,21 +15,11 @@ L06 argued that initialization needs its own phase because agents that skip it w
 
 ## Process flow
 
-1. **READ PROJECT CONTRACT** — Follow the fallback chain to find the project's binding contract:
+1. **READ PROJECT CONTRACT** — Read the project contract per `references/project-contract.md` — that doc encodes the precedence chain (CLAUDE.md → AGENTS.md → kickoff prompt) and the section-extraction protocol. Apply the protocol's degradation rules when sections are missing.
 
-   | Priority | File | Behavior |
-   |----------|------|----------|
-   | 1st | `AGENTS.md` | Full zeus contract — treat `## Definition of Done` as binding. Best case. |
-   | 2nd | `CLAUDE.md` | Partial contract — extract tech stack, conventions, and commands. Zeus plugin rules apply on top. Suggest running `zeus:kickoff-agents-md` to upgrade to a full AGENTS.md when convenient, but do not block work. |
-   | 3rd | Neither exists | Suggest running `zeus:kickoff-agents-md`. If the user declines, proceed with zeus plugin rules only (no project-specific contract). Log a lesson: "Project has no AGENTS.md or CLAUDE.md — conventions are unanchored." |
+2. **READ FEATURES** — Read `.zeus/features.md` if present. This is the feature inventory from `zeus:kickoff-feature-list`.
 
-   When falling back to CLAUDE.md, the agent reads it and maps its content to zeus concepts:
-   - Any "commands" or "scripts" sections → Commands (used by G3/G4 verification).
-   - Any "conventions" or "rules" sections → Conventions (used by code review).
-   - Any "testing" or "lint" sections → DoD candidates.
-   - Anything not mappable → treat as general context, still valuable.
-
-2. **READ FEATURES** — Read `FEATURES.md` if present. This is the feature inventory from `zeus:kickoff-feature-list`.
+   *Pre-relocation zeus projects keep the legacy features file at the project root (the old root-level location). Run `scripts/migrate-to-dotzeus.sh` once to move to `.zeus/features.md`.*
 
 3. **DETECT MEMORY** — Check if `.zeus/memory/` exists.
    - Exists → proceed to step 4.
@@ -57,7 +47,7 @@ digraph session_init {
   agents_md [label="1a. READ\nAGENTS.md?", shape=diamond];
   claude_md [label="1b. Fallback\nCLAUDE.md?", shape=diamond];
   suggest_kickoff [label="1c. Suggest\nkickoff-agents-md", shape=box];
-  features [label="2. READ\nFEATURES.md", shape=box];
+  features [label="2. READ\n.zeus/features.md", shape=box];
   detect [label="3. DETECT\n.zeus/memory/?", shape=diamond];
   create_mem [label="Create directory\ntree + index.md", shape=box];
   lessons [label="4. LOAD LESSONS\nall, uncompressed", shape=box];
@@ -136,7 +126,7 @@ These are not suggestions. They are corrections the user has already made. Viola
 
 - [ ] `AGENTS.md` read, or `CLAUDE.md` fallback used, or absence noted with suggestion to create.
 - [ ] When using CLAUDE.md fallback, content mapped to zeus concepts (commands, conventions, DoD candidates).
-- [ ] `FEATURES.md` read if present.
+- [ ] `.zeus/features.md` read if present.
 - [ ] `.zeus/memory/` exists (created if first session).
 - [ ] All lessons loaded in full.
 - [ ] Latest handoff loaded if present.
@@ -147,7 +137,7 @@ These are not suggestions. They are corrections the user has already made. Viola
 
 - **Predecessor:** `zeus:using-zeus` (SessionStart hook loads using-zeus, which routes to session-init).
 - **Calls:** `zeus:memory-management` for all memory read operations.
-- **Reads:** `AGENTS.md` (from `zeus:kickoff-agents-md`), `FEATURES.md` (from `zeus:kickoff-feature-list`).
+- **Reads:** `AGENTS.md` (from `zeus:kickoff-agents-md`), `.zeus/features.md` (from `zeus:kickoff-feature-list`).
 - **Consumes:** handoff memos written by `zeus:session-handoff`.
 - **Successor:** user's requested task, routed through `zeus:brainstorming` or direct execution.
 - **Gates addressed:** none directly — session-init is a setup skill, not a gate.
