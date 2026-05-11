@@ -32,7 +32,7 @@ There is no single "done" signal. Completion is the level of evidence produced b
 | G1   | Code written                        | `git diff` shows changes (observation only — not a gate)               | —                                                         |
 | G2   | TDD red→green flip                  | Two test runs in context: first FAIL, second PASS                       | `test-driven-development`                                 |
 | G3   | Verification command run fresh      | The command, full stdout, and verdict — not paraphrased                 | `verification-before-completion`                          |
-| G4   | Definition of Done fully satisfied  | Every command-verifiable item in project `AGENTS.md` exits 0            | `kickoff-definition-of-done` + `e2e-gate`                  |
+| G4   | Definition of Done fully satisfied  | Every command-verifiable item in the project contract exits 0           | `kickoff-definition-of-done` + `e2e-gate`                  |
 | G5   | End-to-end pipeline passes          | Realistic user path runs start to finish — produce, propagate, consume  | `e2e-gate`                                                |
 | G6   | Two-stage code review approved      | Spec-compliance pass, then code-quality pass — both approved            | `requesting-code-review` + `receiving-code-review`         |
 | G7   | Handoff state clean                 | Run log written; clean-state memo; branch in shippable state            | `observability` + `session-handoff` + `clean-state`        |
@@ -62,9 +62,9 @@ Every failure attributes to exactly one layer. When a gate stays closed, the age
 
 When the agent enters a working directory:
 
-1. **Read project contract (fallback chain).** Try `AGENTS.md` first. If absent, fall back to `CLAUDE.md` and map its content to zeus concepts (commands, conventions, DoD candidates). If neither exists, suggest running `zeus:kickoff-agents-md`. When falling back to CLAUDE.md, zeus plugin rules still apply on top — CLAUDE.md provides project context, zeus provides the lifecycle discipline.
+1. **Read project contract.** Read the project contract per `references/project-contract.md` — that doc encodes the precedence chain (CLAUDE.md → AGENTS.md → prompt) and the section-extraction protocol. Zeus plugin rules apply on top of whichever file is selected.
 2. **Load cross-session memory.** Run `zeus:session-init` to load `.zeus/memory/` — the self-contained project memory system. This surfaces all lessons (user corrections), the latest handoff memo, and architecture decisions within token budget. No external MCP dependency required.
-3. **No `AGENTS.md` yet?** Run `zeus:kickoff-agents-md`. It will read `CLAUDE.md` as an input signal (if present) to pre-fill fields, then hand off to `zeus:kickoff-definition-of-done`, which hands off to `zeus:kickoff-feature-list`. Each can also be re-run independently to amend its artifact when the project evolves. The plugin will not let work proceed past the planning phase without a populated AGENTS.md and DoD — but if the user declines kickoff, CLAUDE.md fallback keeps the session functional.
+3. **No project contract yet?** If neither `CLAUDE.md` nor `AGENTS.md` exists (per the precedence chain in `references/project-contract.md`), run `zeus:kickoff-agents-md`. It will read any existing signals to pre-fill fields, then hand off to `zeus:kickoff-definition-of-done`, which hands off to `zeus:kickoff-feature-list`. Each can also be re-run independently to amend its artifact when the project evolves. The plugin will not let work proceed past the planning phase without a populated project contract and DoD — but if the user declines kickoff, the precedence-chain fallback keeps the session functional.
 
 ## Critical intervention points
 
@@ -110,7 +110,7 @@ The agent follows the user's lead — but not off a cliff. When a user instructi
 | Security regression | Disabling auth middleware, hardcoding credentials |
 | Architectural pattern break | Putting business logic in a controller in a strict MVC codebase |
 | Dependency conflict | Adding a library that conflicts with an existing one |
-| Convention violation | Ignoring the project's AGENTS.md Definition of Done |
+| Convention violation | Ignoring the project contract's Definition of Done |
 
 **What does NOT trigger the guardrail:**
 
