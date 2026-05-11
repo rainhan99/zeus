@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Use when starting any creative design work in a zeus-managed project — new feature, refactor, architectural change, behavior modification. Reads AGENTS.md to anchor scope, offers the user a choice of brainstorming mode, explores the idea covering all 5 defense layers, produces a 6-section spec doc, and updates FEATURES.md. Hard-gates against any implementation skill running before a spec is approved.
+description: Use when starting any creative design work in a zeus-managed project — new feature, refactor, architectural change, behavior modification. Reads AGENTS.md to anchor scope, offers the user a choice of brainstorming mode, explores the idea covering all 5 defense layers, produces a 6-section spec doc, and updates .zeus/features.md. Hard-gates against any implementation skill running before a spec is approved.
 gates: [G4]
 layer: 1
 lecture: [L01, L07]
@@ -45,7 +45,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
 
 1. **Activate brainstorming state.** Run: `mkdir -p .zeus/state && rm -f .zeus/state/spec-approved && echo "active" > .zeus/state/brainstorming-active`
 2. **Read the project contract** per `references/project-contract.md`. If neither CLAUDE.md nor AGENTS.md exists, abort: "No project contract found. Run `zeus:kickoff-agents-md` first."
-3. **Read `FEATURES.md`** if present. Confirm F-NNN target — existing or new? If new, reserve the next ID.
+3. **Read `.zeus/features.md`** if present. Confirm F-NNN target — existing or new? If new, reserve the next ID.
 4. **Show the 7-gate cascade.** Tell the user: "Completion is gated by 7 evidence levels: G1 code → G2 TDD red-green → G3 verification command → G4 DoD satisfied → G5 E2E pipeline → G6 two-stage review → G7 handoff state."
 5. **Mode selection.** Ask the user:
    - **[1] Walk me through it** (default) — questions one at a time covering L1–L5.
@@ -66,8 +66,8 @@ Complete these items in order. Scale depth to the task — a simple feature gets
    - `## Handoff state requirements` ← L5
    - `## 7-gate impact map` ← which gates get new constraints
 
-   *Pre-relocation zeus projects wrote specs to `docs/specs/`. If your project still has that path, run `scripts/migrate-to-dotzeus.sh` once.*
-8. **Update `FEATURES.md`** — F-NNN status → `in-progress`, add spec link.
+   *Pre-relocation zeus projects wrote specs to `.zeus/specs/`. If your project still has that path, run `scripts/migrate-to-dotzeus.sh` once.*
+8. **Update `.zeus/features.md`** — F-NNN status → `in-progress`, add spec link.
 9. **Spec self-review** — placeholder scan, internal consistency, scope check, ambiguity. Fix inline.
 10. **User reviews spec.** Wait for approval or change requests.
 11. **On approval** — run: `echo "<spec-file-path>" > .zeus/state/spec-approved && rm -f .zeus/state/brainstorming-active` — then invoke `zeus:writing-plans`.
@@ -90,7 +90,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
 
 ## Verification checklist
 
-Before handing off, confirm: project contract was read; F-NNN target chosen; mode was selected; all 5 layers have ≥ 1 note; spec file exists with all 6 sections; FEATURES.md updated; user explicitly approved.
+Before handing off, confirm: project contract was read; F-NNN target chosen; mode was selected; all 5 layers have ≥ 1 note; spec file exists with all 6 sections; .zeus/features.md updated; user explicitly approved.
 
 ## Integration
 

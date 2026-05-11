@@ -78,4 +78,4 @@ The function prints the file name (relative to the project root) on stdout and r
 - Skill writing contract → `references/skill-style.md` (mandates that skills delegate to this protocol).
 - Kickoff entry point → `skills/kickoff-agents-md/SKILL.md` (CLAUDE.md-aware mode).
 - DoD source choice → `skills/kickoff-definition-of-done/SKILL.md`.
-- Artifact layout under `.zeus/` → `skills/memory-management/SKILL.md` and the spec at `docs/specs/2026-05-11-claude-md-compat-and-dotzeus-relocation-design.md`.
+- Artifact layout under `.zeus/` → `skills/memory-management/SKILL.md` and the spec at `.zeus/specs/2026-05-11-claude-md-compat-and-dotzeus-relocation-design.md`.

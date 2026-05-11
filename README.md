@@ -40,7 +40,7 @@ After install, every new conversation auto-loads `using-zeus` via the SessionSta
 |-------|---------|
 | `kickoff-agents-md` | Generates AGENTS.md by scanning repo signals + interviewing the user. |
 | `kickoff-definition-of-done` | Refines DoD into command-verifiable items. |
-| `kickoff-feature-list` | Produces FEATURES.md — per-feature roadmap with stable IDs. |
+| `kickoff-feature-list` | Produces `.zeus/features.md` — per-feature roadmap with stable IDs. |
 
 ### SP3: Discovery & Planning
 | Skill | Purpose |
@@ -101,7 +101,7 @@ zeus/
 
 ## Upgrading from pre-relocation zeus
 
-If you're upgrading from a zeus version that wrote artifacts under `docs/specs/`, `docs/plans/`, or kept `FEATURES.md` at the project root, run the one-shot migration once per project:
+If you're upgrading from a zeus version that wrote artifacts under `docs/specs/`, `docs/plans/`, or kept `FEATURES.md` at the project root, run `scripts/migrate-to-dotzeus.sh` once per project:
 
 ```bash
 bash scripts/migrate-to-dotzeus.sh
