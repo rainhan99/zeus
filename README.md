@@ -28,6 +28,19 @@ git clone https://github.com/rainhan99/zeus.git
 
 After install, every new conversation auto-loads `using-zeus` via the SessionStart hook, anchoring the 7-gate cascade and 5-layer model in working memory.
 
+## Slash commands
+
+For users who already know the lifecycle, four thin wrappers expose the main phases directly:
+
+| Command | Wraps | When to use |
+|---|---|---|
+| `/zeus:brainstorm <idea>` | `zeus:brainstorming` skill | Design a new feature — produces a spec doc that hard-gates implementation until approved |
+| `/zeus:plan [spec]` | `zeus:writing-plans` skill | Turn an approved spec into bite-sized tasks with TDD steps + footer-signed approval |
+| `/zeus:execute [plan]` | `zeus:executing-plans` skill | Walk the approved plan task by task with fresh verification + G4 DoD sweep |
+| `/zeus:ship` | `zeus:finishing-a-development-branch` skill | Present merge / PR / push / keep options once G7 closes |
+
+The slash commands are thin — every iron law (spec approval, plan footer signature, TDD per task, Logic Completeness Manifest, DoD gate) is still enforced by the underlying skills. Natural-language triggers (e.g., "I want to add X") continue to work via the SessionStart-injected routing table.
+
 ## Skills (25)
 
 ### SP1: Bootstrap

@@ -9,6 +9,24 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.11.2] — 2026-05-11
+
+### Added
+
+- Four thin slash command wrappers for the main lifecycle phases:
+  - `/zeus:brainstorm <idea>` — invokes the `zeus:brainstorming` skill
+  - `/zeus:plan [spec]` — invokes `zeus:writing-plans`
+  - `/zeus:execute [plan]` — invokes `zeus:executing-plans`
+  - `/zeus:ship` — invokes `zeus:finishing-a-development-branch`
+- The wrappers are intentionally thin (each is a single-paragraph markdown
+  file under `commands/`). Every iron law — spec approval, plan footer
+  signature, TDD discipline, Logic Completeness Manifest, full DoD sweep,
+  G7 close-out — is still enforced by the underlying skills. The natural
+  language entry path (e.g., "I want to add X" → routing table → skill)
+  continues to work unchanged.
+- `README.md` now documents the slash command surface alongside the
+  existing skill table.
+
 ## [0.11.1] — 2026-05-11
 
 ### Added
