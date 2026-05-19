@@ -9,6 +9,29 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.11.3] — 2026-05-19
+
+### Added
+
+- `/zeus:execute` is now a mode router. Before dispatching, it asks the user
+  which execution mode to use — `auto` (recommended), `sequential`, or
+  `subagent` — and routes to either `zeus:executing-plans` or
+  `zeus:subagent-driven-development` accordingly. The `auto` mode picks based
+  on plan shape (task count, plus optional `Files:` independence signal when
+  every task in plan Section 4 declares one). When `auto` resolves to
+  `subagent`, the command asks for an explicit confirm before dispatching;
+  when it resolves to `sequential`, it dispatches silently.
+- `zeus:executing-plans` step 2 honors a new `mode-resolved=` marker in
+  `$ARGUMENTS`. When the marker is present, the in-skill "consider subagent"
+  suggestion is skipped — the command layer has already routed. Direct
+  invocation of the skill without the marker preserves the existing prompt.
+
+### Changed
+
+- Mode selection no longer happens mid-skill on step 2 of `executing-plans`;
+  it happens at the command layer before any skill is invoked. The choice is
+  now unmissable instead of buried in a single-line prompt.
+
 ## [0.11.2] — 2026-05-11
 
 ### Added
