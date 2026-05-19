@@ -44,7 +44,7 @@ The plan must contain the footer signature `**User-approved:** <timestamp> by <u
 ## Process flow
 
 1. **Read plan file.** Verify the `**User-approved:**` footer exists. If missing, refuse: "This plan has no approval signature. Run `zeus:writing-plans` Phase 4 to get user approval first." Then verify the plan references a brainstorming spec (Section 1 or header). If the spec file is missing or incomplete (lacks all 6 sections), refuse: "Plan references spec at `<path>`, but spec is missing or incomplete. Run `zeus:brainstorming` first."
-2. **Check subagent availability.** If the platform supports subagents (Claude Code Agent tool, Codex subagent, etc.), suggest: "Subagents are available. Consider `zeus:subagent-driven-development` for higher quality (two-stage review per task). Continue with sequential execution? [y/n]" Proceed only after the user confirms.
+2. **Check subagent availability.** First: if `$ARGUMENTS` contains `mode-resolved=`, the command layer already routed — skip this step entirely. Otherwise, if the platform supports subagents (Claude Code Agent tool, Codex subagent, etc.), suggest: "Subagents are available. Consider `zeus:subagent-driven-development` for higher quality (two-stage review per task). Continue with sequential execution? [y/n]" Proceed only after the user confirms.
 3. **Read the project contract** per `references/project-contract.md`. Extract Definition of Done items, Commands, Conventions (including file-size thresholds), and Invariants.
 4. **Read Logic Completeness Manifest** (plan Section 9). Note any authorized simplifications. Everything else must be implemented in full.
 5. **Create task list** from plan Section 4 (Tasks). One task per plan task, in order.
@@ -110,6 +110,7 @@ If tempted to write a quick grep or shell one-liner instead of running the real 
 | "I'll write a quick shell check instead of running the real linter." | Custom checks are always weaker than battle-tested ecosystem tools. Use the real tool. |
 | "Plan is outdated, I'll adapt on the fly." | Plans are contracts. If the plan is wrong, go back to writing-plans. Don't rewrite mid-execution. |
 | "I'll skip the Manifest check, I didn't simplify anything." | The check is cheap. Skipping it is how unauthorized simplification ships unnoticed. |
+| "`mode-resolved=` is set but I'll suggest subagent anyway, just in case." | The marker means the command layer already ran the dialogue. Re-asking adds friction and contradicts the just-made choice. Honor the marker. |
 
 ## Red flags / Stop conditions
 
