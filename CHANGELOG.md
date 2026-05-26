@@ -9,6 +9,26 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.11.4] — 2026-05-26
+
+### Fixed
+
+- `hooks/pre-tool-use.sh` no longer false-blocks Edit/Write when `cwd` is
+  absent from the hook's stdin payload. The previous fallback chain ended
+  in `.`, which resolves against the hook subprocess's cwd — not the
+  project root — and so missed `.zeus/state/spec-approved` even when the
+  spec was approved. New behavior:
+  1. Prefer stdin `.cwd`, then `$CLAUDE_PROJECT_DIR`, then `$PWD` (never
+     bare `.`).
+  2. If the resolved root has no `.zeus/` directory, exit 0 — the user
+     isn't in a zeus project and the gate doesn't apply. This also makes
+     stray invocations from unrelated directories safe.
+
+  Symptom this fixes: in plugin-hook context Claude Code 2.1.150 sometimes
+  omits `.cwd` from stdin and doesn't set `$CLAUDE_PROJECT_DIR`, causing
+  writes to be blocked with "No approved brainstorming spec found" even
+  when `.zeus/state/spec-approved` was present in the actual project root.
+
 ## [0.11.3] — 2026-05-19
 
 ### Added
