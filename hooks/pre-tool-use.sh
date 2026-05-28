@@ -31,10 +31,11 @@ esac
 # resolution missed and the user isn't actually using zeus here.
 [ -d "$PROJECT/.zeus" ] || exit 0
 
-# Allow if brainstorming is active or spec is approved
+# Allow if brainstorming is active, spec is approved, or quick-fix mode is active
 [ -f "$PROJECT/.zeus/state/brainstorming-active" ] && exit 0
 [ -f "$PROJECT/.zeus/state/spec-approved" ] && exit 0
+[ -f "$PROJECT/.zeus/state/quick-fix-active" ] && exit 0
 
 # Block — stderr is shown to the model
-echo "Zeus: code changes blocked. No approved brainstorming spec found. Invoke the Skill tool with zeus:brainstorming to start the design process and unblock writes." >&2
+echo "Zeus: code changes blocked. No approved spec or quick-fix mode active. Invoke zeus:brainstorming to start design, or use the quick-fix bypass for small fixes." >&2
 exit 2

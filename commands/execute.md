@@ -12,24 +12,14 @@ Before invoking any skill, perform mode routing — `/zeus:execute` is the one z
    - `files_signal`: true iff **every** task block contains at least one line matching `^[Ff]iles:` with one or more comma-separated paths. Mixed (some present, some absent) counts as false.
 
 3. **Ask the user which mode** via `AskUserQuestion`:
-   - Question: "How should this plan execute?"
-   - Header: "Execution mode"
+   - Print a one-line context hint first: task count, whether files overlap, and which mode you'd lean toward — but the user always decides. Never auto-select.
+   - Question: "选择执行模式 / Choose execution mode"
+   - Header: "Mode"
    - Options (single-select):
-     - `auto (Recommended)` — pick based on plan shape (task count + file independence).
      - `sequential` — one task at a time in the current session (`zeus:executing-plans`).
      - `subagent` — one fresh subagent per task with two-stage review (`zeus:subagent-driven-development`).
 
-4. **If user picked `auto`, compute the recommendation:**
-   ```
-   if files_signal:
-       overlap = any two tasks share a path in their Files: lines?
-       recommend = "subagent" if (not overlap and tasks >= 3) else "sequential"
-   else:
-       recommend = "subagent" if tasks >= 4 else "sequential"
-   ```
-   Print one line stating the recommendation and why (e.g., "5 tasks, no Files signal → recommend subagent"). If `recommend == "subagent"`, ask a confirm via `AskUserQuestion` (single-select, two options: `proceed with subagent` / `fall back to sequential`); on fall-back, set the mode to `sequential`. If `recommend == "sequential"`, dispatch silently.
-
-5. **Dispatch** by invoking the matching skill via the `Skill` tool, passing the original `$ARGUMENTS` (preserving any user-supplied plan path) with `mode-resolved=<mode>` appended (space-separated).
+4. **Dispatch** by invoking the matching skill via the `Skill` tool, passing the original `$ARGUMENTS` (preserving any user-supplied plan path) with `mode-resolved=<mode>` appended (space-separated).
 
    Example: if the user invoked `/zeus:execute .zeus/plans/foo.md` and the resolved mode is `sequential`, the args passed to the skill are `.zeus/plans/foo.md mode-resolved=sequential`.
 

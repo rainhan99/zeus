@@ -9,6 +9,37 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.11.5] — 2026-05-28
+
+### Changed
+
+- `/zeus:execute` mode selection simplified: removed `auto` option entirely.
+  The user now always picks directly between `sequential` and `subagent` — no
+  hidden heuristic. A one-line context hint (task count, file overlap) is
+  printed before the question, but the decision is never made for the user.
+- `zeus:executing-plans` step 2 now asks the execution mode question (with the
+  same direct two-option format) when invoked without `mode-resolved=` in
+  `$ARGUMENTS`, ensuring the subagent choice is always presented regardless of
+  entry path.
+- Bootstrap routing (`hooks/bootstrap.md`) adds a mandatory "Execution mode"
+  section: ALL development tasks — full-process or quick-fix, any size — must
+  ask the user `sequential` vs `subagent` before proceeding.
+
+### Added
+
+- **Quick-fix bypass (小修复直通)** — small, bounded fixes (≤ 3 files, no
+  architectural decision, unambiguous intent) can now skip the 7-gate cascade
+  (brainstorming + planning phases) with explicit user consent. The flow:
+  1. Agent identifies the task as quick-fix eligible and tells the user.
+  2. User confirms via `AskUserQuestion` (`Yes, bypass 7-gate` / `No, full
+     process`).
+  3. On bypass: `.zeus/state/quick-fix-active` is created, writes are unblocked,
+     verification (tests/lint) still runs, state file is cleaned up on
+     completion.
+- `hooks/pre-tool-use.sh` now recognizes `.zeus/state/quick-fix-active` as a
+  valid unblock condition alongside `spec-approved` and `brainstorming-active`.
+- Block message updated to mention the quick-fix bypass option.
+
 ## [0.11.4] — 2026-05-26
 
 ### Fixed
