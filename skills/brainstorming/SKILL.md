@@ -59,7 +59,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
    - **L5 State** — what state remains for the next session, observability needs
    - **Completeness rule:** each layer must have ≥ 1 captured note. Empty layer = unfinished brainstorm. For mode [2]/[3], two genuinely different designs must be generated; if only one viable appr, drop to mode [1].
 7. **Write spec** to `.zeus/specs/<YYYY-MM-DD>-<topic>-design.md` with 6 fixed sections:
-   - `## Goal / Scope` ← L1
+   - `## Goal / Scope` ← L1. MUST contain a `### Scope Checklist`: list each discrete, testable capability as `- **SC-N** — <capability>` with stable, never-reused IDs (`SC-1`, `SC-2`, …). This checklist is the single source of truth that `writing-plans` maps to tasks and `scripts/check-spec-coverage.sh` verifies mechanically — a capability not listed here can be silently dropped downstream.
    - `## Architecture / Context dependencies` ← L2
    - `## Environment requirements` ← L3
    - `## Definition of Done delta` ← L4 (will patch the project contract's `## Definition of Done`). Write `(none)` explicitly if empty.
@@ -68,7 +68,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
 
    *Pre-relocation zeus projects wrote specs to `.zeus/specs/`. If your project still has that path, run `scripts/migrate-to-dotzeus.sh` once.*
 8. **Update `.zeus/features.md`** — F-NNN status → `in-progress`, add spec link.
-9. **Spec self-review** — placeholder scan, internal consistency, scope check, ambiguity. Fix inline.
+9. **Spec self-review** — placeholder scan, internal consistency, scope check, ambiguity. Verify `## Goal / Scope` contains a `### Scope Checklist` and every `SC-N` item is atomic + testable (one capability, provable by a command). Fix inline.
 10. **User reviews spec.** Wait for approval or change requests.
 11. **On approval** — run: `echo "<spec-file-path>" > .zeus/state/spec-approved && rm -f .zeus/state/brainstorming-active` — then invoke `zeus:writing-plans`.
 
