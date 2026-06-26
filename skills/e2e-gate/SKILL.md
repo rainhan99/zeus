@@ -31,6 +31,13 @@ G4 and G5 are sequential. G4 must pass before G5 runs. If G4 fails, there is no 
 
 ### Phase 2 — G5: E2E pipeline
 
+**G5 entry-condition — Spec coverage cross-check (run FIRST, before the E2E path).** This is an entry-condition to G5, not a new gate and not a reorder of the cascade. Re-read the linked spec's `### Scope Checklist`. If `scripts/check-spec-coverage.sh` exists, run `bash scripts/check-spec-coverage.sh <spec> <plan>`:
+- **exit 0** → every spec `SC-N` is mapped to a task; proceed.
+- **exit 1** → orphan `SC-N`(s) listed. Reconcile each against the plan's Logic Completeness Manifest authorized-cuts. Any genuine orphan (a spec feature with no implementation) keeps **G5 closed** → route back to `zeus:writing-plans`.
+- **exit 2 (degraded), or script absent** → **announce** "running degraded coverage audit (spec has no SC-IDs / detector absent)", then re-read the spec prose and confirm by hand that every enumerated feature has fresh evidence. Never silently skip the cross-check.
+
+Beyond presence in the matrix, every `SC-N` must have **fresh verification evidence** before G5 opens (see `zeus:verification-before-completion`).
+
 6. **Identify the realistic user path.** Read the plan's Test Plan section (E2E tests subsection). If no E2E test is defined, construct one: what would a real user do from start to finish?
 7. **The path must be produce → propagate → consume → assert:**
    - **Produce:** create the artifact the feature generates (data, file, API response, UI state).
