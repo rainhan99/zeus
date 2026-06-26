@@ -52,3 +52,10 @@ if [ -z "$orphans" ]; then
   printf 'OK: all %s SC-IDs covered\n' "$total"
   exit 0
 fi
+
+# One or more spec SC-IDs have no task in the matrix.
+while IFS= read -r id; do
+  [ -n "$id" ] || continue
+  printf 'ORPHAN: %s has no task in %s (reconcile vs Manifest authorized-cuts if intentional)\n' "$id" "$plan"
+done <<< "$orphans"
+exit 1
