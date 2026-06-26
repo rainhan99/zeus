@@ -34,3 +34,21 @@ if [ -z "$spec_ids" ]; then
   printf 'DEGRADED: no SC-N IDs found in %s — route to manual/LLM audit\n' "$spec"
   exit 2
 fi
+
+# Covered SC-IDs: matrix rows ("| SC-N | ... |") whose task column (4th cell)
+# is non-empty after trimming. Placeholder tokens count as NOT covered.
+covered_ids="$(grep -E '^\| *SC-[0-9]+ *\|' "$plan" 2>/dev/null \
+  | awk -F'|' '{
+      t = $4; gsub(/^[ \t]+|[ \t]+$/, "", t); lt = tolower(t);
+      if (t != "" && t != "-" && t != "—" && lt != "(none)" && lt != "tbd" && lt != "n/a") print $2
+    }' \
+  | grep -oE 'SC-[0-9]+' | sort -u || true)"
+
+# Orphans = spec IDs with no covered counterpart (both inputs pre-sorted).
+orphans="$(comm -23 <(printf '%s\n' "$spec_ids") <(printf '%s\n' "$covered_ids"))"
+
+if [ -z "$orphans" ]; then
+  total="$(printf '%s\n' "$spec_ids" | grep -c .)"
+  printf 'OK: all %s SC-IDs covered\n' "$total"
+  exit 0
+fi
