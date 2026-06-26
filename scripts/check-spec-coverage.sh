@@ -35,17 +35,25 @@ if [ -z "$spec_ids" ]; then
   exit 2
 fi
 
-# Covered SC-IDs from the "### Spec Coverage Matrix" (canonical 4 columns:
-# SC-ID | Capability | Implementing task(s) | Verification command). A row is a
-# table row (starts with "|") whose first cell carries an SC-N token (the cell
-# may also hold descriptive text). The SC-N is covered iff the 3rd content
-# column — "Implementing task(s)", awk field $4 — is non-empty and not a
-# placeholder. Robust to extra text in the SC-ID cell; column order is fixed by
-# the format that writing-plans mandates.
+# Covered SC-IDs from the Spec Coverage Matrix — the table whose header row
+# names an "Implementing task(s)" column. Scoping to that table (not the whole
+# file) stops an SC-N token in some OTHER plan table from masking a real orphan.
+# The task column is located by header, so column order does not matter. An SC-N
+# row is covered iff its task cell is non-empty and not a placeholder. Robust to
+# descriptive text in the SC-ID cell.
 covered_ids="$(awk -F'|' '
-    /^[ \t]*\|/ && $2 ~ /SC-[0-9]+/ {
-      t = $4; gsub(/^[ \t]+|[ \t]+$/, "", t); lt = tolower(t);
-      if (t != "" && t != "-" && t != "—" && lt != "(none)" && lt != "tbd" && lt != "n/a") print $2
+    # Matrix header row: find which field names the task column; rows that
+    # follow (until the table ends) are matrix rows.
+    /^[ \t]*\|/ {
+      if (taskcol == 0) {
+        for (i = 1; i <= NF; i++) { if (tolower($i) ~ /implementing task/) { taskcol = i; inmatrix = 1; next } }
+      }
+    }
+    $0 !~ /^[ \t]*\|/ { inmatrix = 0; taskcol = 0 }   # table ended; reset
+    inmatrix && $2 ~ /SC-[0-9]+/ {
+      t = $taskcol; gsub(/^[ \t]+|[ \t]+$/, "", t); lt = tolower(t);
+      if (t != "" && t != "-" && t != "—" && lt != "(none)" && lt != "none" \
+          && lt != "tbd" && lt != "todo" && lt != "n/a" && lt != "..." && lt != "?") print $2
     }' "$plan" 2>/dev/null \
   | grep -oE 'SC-[0-9]+' | sort -u || true)"
 

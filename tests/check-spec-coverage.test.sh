@@ -42,6 +42,10 @@ assert_code() {
 assert "degraded" 2 "DEGRADED" "$FIX/sc-spec-legacy.md" "$FIX/sc-plan-full.md"
 assert "full"     0 "OK"       "$FIX/sc-spec-full.md"   "$FIX/sc-plan-full.md"
 assert "orphan"   1 "SC-2"     "$FIX/sc-spec-full.md"   "$FIX/sc-plan-orphan.md"
+# Regression for C-1: an SC-N in a NON-matrix table must not mask a true orphan.
+assert "decoy-scoping" 1 "SC-2" "$FIX/sc-spec-full.md" "$FIX/sc-plan-decoy.md"
+# Regression for M-1: placeholder task cells (none/todo/...) are NOT coverage.
+assert "placeholder"   1 "SC-1" "$FIX/sc-spec-full.md" "$FIX/sc-plan-placeholder.md"
 assert_code "usage-noargs"  64
 assert_code "usage-missing" 64 "$FIX/sc-spec-full.md" "$FIX/does-not-exist.md"
 
