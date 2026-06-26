@@ -35,13 +35,18 @@ if [ -z "$spec_ids" ]; then
   exit 2
 fi
 
-# Covered SC-IDs: matrix rows ("| SC-N | ... |") whose task column (4th cell)
-# is non-empty after trimming. Placeholder tokens count as NOT covered.
-covered_ids="$(grep -E '^\| *SC-[0-9]+ *\|' "$plan" 2>/dev/null \
-  | awk -F'|' '{
+# Covered SC-IDs from the "### Spec Coverage Matrix" (canonical 4 columns:
+# SC-ID | Capability | Implementing task(s) | Verification command). A row is a
+# table row (starts with "|") whose first cell carries an SC-N token (the cell
+# may also hold descriptive text). The SC-N is covered iff the 3rd content
+# column — "Implementing task(s)", awk field $4 — is non-empty and not a
+# placeholder. Robust to extra text in the SC-ID cell; column order is fixed by
+# the format that writing-plans mandates.
+covered_ids="$(awk -F'|' '
+    /^[ \t]*\|/ && $2 ~ /SC-[0-9]+/ {
       t = $4; gsub(/^[ \t]+|[ \t]+$/, "", t); lt = tolower(t);
       if (t != "" && t != "-" && t != "—" && lt != "(none)" && lt != "tbd" && lt != "n/a") print $2
-    }' \
+    }' "$plan" 2>/dev/null \
   | grep -oE 'SC-[0-9]+' | sort -u || true)"
 
 # Orphans = spec IDs with no covered counterpart (both inputs pre-sorted).
