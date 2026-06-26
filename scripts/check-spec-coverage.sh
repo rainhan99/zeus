@@ -35,22 +35,24 @@ if [ -z "$spec_ids" ]; then
   exit 2
 fi
 
-# Covered SC-IDs from the Spec Coverage Matrix — the table whose header row
-# names an "Implementing task(s)" column. Scoping to that table (not the whole
-# file) stops an SC-N token in some OTHER plan table from masking a real orphan.
-# The task column is located by header, so column order does not matter. An SC-N
-# row is covered iff its task cell is non-empty and not a placeholder. Robust to
-# descriptive text in the SC-ID cell.
+# Covered SC-IDs from the Spec Coverage Matrix. Three guards keep this honest:
+#   1. SCOPE — only consider tables inside the matrix region. A heading naming
+#      "Spec Coverage Matrix" or "Logic Completeness Manifest" turns the region
+#      on; any other heading turns it off. This stops a table in ANOTHER section
+#      (a risk register, a stale/example matrix in the Tasks section) from
+#      masking a real orphan.
+#   2. HEADER — within the region, the matrix is the table whose header names the
+#      task column; its field index is captured, so task column order is free.
+#   3. CELL — an SC-N row (SC-ID is the first content cell, $2, per the mandated
+#      column order) is covered iff its task cell is non-empty and not a
+#      placeholder. Descriptive text in the SC-ID cell is tolerated.
 covered_ids="$(awk -F'|' '
-    # Matrix header row: find which field names the task column; rows that
-    # follow (until the table ends) are matrix rows.
-    /^[ \t]*\|/ {
-      if (taskcol == 0) {
-        for (i = 1; i <= NF; i++) { if (tolower($i) ~ /implementing task/) { taskcol = i; inmatrix = 1; next } }
-      }
+    /^#+[ \t]/ { inscope = ($0 ~ /Spec Coverage Matrix/ || $0 ~ /Logic Completeness Manifest/) ? 1 : 0; next }
+    inscope && /^[ \t]*\|/ && taskcol == 0 {
+      for (i = 1; i <= NF; i++) { if (tolower($i) ~ /implementing task/) { taskcol = i; break } }
+      next
     }
-    $0 !~ /^[ \t]*\|/ { inmatrix = 0; taskcol = 0 }   # table ended; reset
-    inmatrix && $2 ~ /SC-[0-9]+/ {
+    inscope && taskcol > 0 && /^[ \t]*\|/ && $2 ~ /SC-[0-9]+/ {
       t = $taskcol; gsub(/^[ \t]+|[ \t]+$/, "", t); lt = tolower(t);
       if (t != "" && t != "-" && t != "—" && lt != "(none)" && lt != "none" \
           && lt != "tbd" && lt != "todo" && lt != "n/a" && lt != "..." && lt != "?") print $2

@@ -46,6 +46,9 @@ assert "orphan"   1 "SC-2"     "$FIX/sc-spec-full.md"   "$FIX/sc-plan-orphan.md"
 assert "decoy-scoping" 1 "SC-2" "$FIX/sc-spec-full.md" "$FIX/sc-plan-decoy.md"
 # Regression for M-1: placeholder task cells (none/todo/...) are NOT coverage.
 assert "placeholder"   1 "SC-1" "$FIX/sc-spec-full.md" "$FIX/sc-plan-placeholder.md"
+# Regression for R-1: a 2nd task-header table OUTSIDE the Manifest section must
+# not mask a true orphan dropped by the real matrix.
+assert "stale-matrix"  1 "SC-2" "$FIX/sc-spec-full.md" "$FIX/sc-plan-stale-matrix.md"
 assert_code "usage-noargs"  64
 assert_code "usage-missing" 64 "$FIX/sc-spec-full.md" "$FIX/does-not-exist.md"
 
