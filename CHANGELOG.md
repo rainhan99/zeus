@@ -9,6 +9,38 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-06-29
+
+### Added
+
+- **F-002 — spec coverage completeness.** A traceability spine that stops spec
+  features from being silently dropped during development. Every spec feature
+  gets a stable `SC-N` ID in a `### Scope Checklist`; `writing-plans` maps each
+  to a task in a `### Spec Coverage Matrix`; and a mechanical detector verifies
+  the mapping.
+  - `scripts/check-spec-coverage.sh <spec> <plan>` — exit `0` full coverage /
+    `1` orphan SC-IDs listed / `2` degraded (spec has no SC-IDs → manual/LLM
+    audit) / `64` usage. Parsing is scoped to the matrix region; the task
+    column is located by header. Raw-orphan detection only — reconciliation
+    against authorized cuts stays in the skill layer.
+  - `zeus:brainstorming` now emits the `### Scope Checklist` with stable
+    `SC-N` IDs in `## Goal / Scope`.
+  - `zeus:writing-plans` Section 9 carries the `### Spec Coverage Matrix`;
+    Phase 3 self-review runs the detector if present, else declares a degraded
+    manual check.
+  - `zeus:e2e-gate` runs the coverage cross-check as a G5 entry-condition; an
+    unmapped or unverified `SC-N` keeps G5 closed.
+  - `zeus:verification-before-completion` now requires fresh per-`SC-N`
+    evidence, not just "tests pass".
+  - Round-trip test harness (`tests/check-spec-coverage.test.sh`, 8 assertions
+    including decoy-scoping and stale-matrix false-positive regressions) plus
+    fixtures under `tests/fixtures/`.
+
+### Fixed
+
+- Synced `plugin.json` and `.claude-plugin/marketplace.json` version fields,
+  which had drifted behind the CHANGELOG (0.11.4 / 0.11.3 vs released 0.11.5).
+
 ## [0.11.5] — 2026-05-28
 
 ### Changed
