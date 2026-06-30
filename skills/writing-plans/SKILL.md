@@ -99,6 +99,12 @@ Output: plan → your approval → Phase 3 (Execution)
    - New DoD items to be appended to the project contract's `## Definition of Done` (or `.zeus/dod.md` if DoD is out-of-tree) after this plan completes.
 9. **Logic Completeness Manifest**
    - Default body: "Every requirement in the linked spec MUST be implemented in full. Authorized simplifications: (none)"
+   - **Spec Coverage Matrix** — an embedded `### Spec Coverage Matrix` (a subsection of this section, NOT a new top-level `##`, so the 10-section count is unchanged). A table mapping every spec `SC-N` to the task(s) that implement it and the command that proves it:
+
+     | SC-ID | Capability | Implementing task(s) | Verification command |
+     |---|---|---|---|
+
+     Every `SC-N` from the spec's `### Scope Checklist` MUST appear here mapped to ≥1 task, OR be logged below as an authorized simplification. An unmapped `SC-N` is an orphan — the feature would ship missing.
    - If user authorizes simplification, 4-field block per item:
      - Simplification: <what>
      - Reason: <why user authorized>
@@ -122,6 +128,7 @@ Output: plan → your approval → Phase 3 (Execution)
 - Multi-stack architect checklist answered for each active stack.
 - No TBDs, TODOs, "appropriate", "similar to Task N" — full content everywhere.
 - Logic Completeness Manifest present (even if "(none)").
+- **Spec coverage gate (SC traceability):** every `SC-N` in the spec's `### Scope Checklist` is mapped to ≥1 task in the Spec Coverage Matrix, or logged as an authorized simplification. If `scripts/check-spec-coverage.sh` exists, run `bash scripts/check-spec-coverage.sh <spec> <plan>` and resolve any exit-1 orphan against the Manifest's authorized cuts; if the script does NOT exist, perform the check by hand and **explicitly declare** the degraded (manual) verification in the self-review output. A genuine orphan blocks the plan.
 
 ### Phase 4 — User approval gate (HARD GATE)
 
@@ -212,6 +219,7 @@ For stacks not in the table, generate the equivalent checklist at runtime: "what
 - Every File Map file has a row in Section 10.
 - Every OVER row has split plan or Manifest entry.
 - No `TODO` / `XXX` / `mock` / `stub` patterns in plan task bodies (except as authorized in Manifest).
+- Spec coverage: every `SC-N` in the spec's `### Scope Checklist` appears in the Spec Coverage Matrix mapped to a task — run `bash scripts/check-spec-coverage.sh <spec> <plan>` if present, else declare the manual/degraded check. Orphans resolved or logged as authorized cuts.
 
 ## Integration
 

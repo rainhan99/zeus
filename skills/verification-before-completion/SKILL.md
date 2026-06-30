@@ -60,6 +60,7 @@ digraph verification {
 | "Bug fixed" | Test original symptom: passes | "Code changed, assumed fixed" |
 | "Regression test works" | Red-green cycle verified | Test passes once (never saw it fail) |
 | "Requirements met" | Line-by-line checklist with evidence | "Tests passing" (tests may not cover all requirements) |
+| "All spec features done" | Every `SC-N` in the spec's Scope Checklist mapped to fresh passing evidence (`check-spec-coverage.sh` exit 0, plus a green verification per `SC-N`) | "Tests pass" — a feature can be unlisted or unimplemented while every existing test stays green |
 | "Agent completed" | VCS diff shows changes + verification | Agent reports "success" (agents lie) |
 
 ## Ecosystem-standard tooling mandate
