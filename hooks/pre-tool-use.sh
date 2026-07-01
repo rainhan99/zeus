@@ -37,5 +37,9 @@ esac
 [ -f "$PROJECT/.zeus/state/quick-fix-active" ] && exit 0
 
 # Block — stderr is shown to the model
-echo "Zeus: code changes blocked. No approved spec or quick-fix mode active. Invoke zeus:brainstorming to start design, or use the quick-fix bypass for small fixes." >&2
+echo "Zeus: code changes are gated until a spec is approved. Options:
+  • Small hotfix? Run /quick-fix <description> — the agent judges eligibility
+    against the senior-architect rubric and, once you confirm, stamps the bypass.
+  • Larger change? Run /brainstorm to design it (produces an approved spec).
+No marker found in .zeus/state/ (brainstorming-active | spec-approved | quick-fix-active)." >&2
 exit 2

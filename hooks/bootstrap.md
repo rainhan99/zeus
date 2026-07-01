@@ -14,27 +14,30 @@ Note: Edit/Write tool calls are blocked by the zeus PreToolUse hook until a brai
 
 ## Quick-fix bypass (小修复直通)
 
-When the user's request is clearly a **small, bounded fix** — typo, config tweak, one-liner bug, style change, dependency bump, or any change where the scope is self-evident and a full spec would be pure ceremony — you MUST offer the quick-fix bypass before routing to `zeus:brainstorming`.
+The user can initiate this directly with **`/quick-fix <description>`**, or you offer it when a request is clearly a small, bounded fix. Either way, you judge eligibility from a **senior-architect lens** — the *nature* of the change, not a file count.
 
-**Criteria for quick-fix eligibility:**
-- Scope is obvious and self-contained (≤ 3 files, no architectural decision)
-- No new abstractions, no new dependencies, no API surface change
-- The user's intent is unambiguous — no design choices to explore
+**Eligibility — disqualifier rubric (ANY one hit → route to full process, NOT quick-fix):**
+- Touches architecture or module boundaries
+- Introduces a new abstraction, or a new dependency
+- Changes a public API, a contract, or a data format
+- Alters state ownership or the concurrency model
+- Touches security, authentication, or authorization
+- Requires weighing multiple design approaches (a real design decision)
+
+If none of the above are hit, it qualifies. Examples that qualify: a local logic
+correction, copy/text change, unambiguous off-by-one, a null-guard, a config-value
+tweak, a dependency version bump with no API change.
 
 **Flow:**
-1. Tell the user: "这个任务看起来是小修复，可以跳过 7-gate 流程直接实施。/ This looks like a small fix — it can bypass the 7-gate cascade."
-2. Ask via `AskUserQuestion`:
-   - Question: "是否启用快速修复模式？(跳过 spec/plan 阶段，保留验证) / Enable quick-fix mode? (skips spec/plan, keeps verification)"
-   - Header: "Quick-fix"
-   - Options:
-     - `Yes, bypass 7-gate` — proceed directly, skip brainstorming + planning
-     - `No, full process` — route to `zeus:brainstorming` as normal
-3. If user picks bypass:
+1. **Judge and announce your verdict with reasoning.** Apply the rubric to the described change plus the relevant code. State the verdict out loud: eligible, or ineligible naming the exact disqualifier that tripped.
+2. **If eligible:**
+   - Confirm with the user (a plain confirmation, or the `/quick-fix` invocation itself is the consent).
    - Run: `echo "quick-fix" > .zeus/state/quick-fix-active`
-   - Ask execution mode (see below)
-   - Implement the fix directly — still run verification (tests, lint) before reporting done
-   - On completion: `rm -f .zeus/state/quick-fix-active`
-4. If user picks full process: route to `zeus:brainstorming` normally.
+   - Ask execution mode (see below).
+   - Implement directly — still run verification (tests, lint) before reporting done.
+   - On completion: `rm -f .zeus/state/quick-fix-active` (one authorization = one hotfix; never leave it on).
+   - If mid-implementation you discover architectural depth, stop, `rm -f` the marker, and recommend the full process — a quick-fix that grew up is no longer a quick-fix.
+3. **If ineligible:** do NOT stamp the marker. Softly recommend `/brainstorm`, stating which rubric item disqualified it. The user MAY override with explicit confirmation — that confirmation is the recorded authorization; only then stamp the marker and proceed.
 
 ## Execution mode (always ask)
 
