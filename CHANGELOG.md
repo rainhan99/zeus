@@ -9,6 +9,36 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.13.0] — 2026-07-01
+
+### Added
+
+- **F-003 — `/quick-fix` command entry.** A user-invocable `/quick-fix
+  <description>` slash command to initiate a 7-gate bypass for a genuine
+  hotfix. The agent judges eligibility from a **senior-architect lens** — the
+  *nature* of the change, not a file count — announces its verdict, and only
+  stamps the bypass marker on an eligible verdict with user consent (one
+  authorization = one hotfix, marker cleared on completion).
+- `hooks/bootstrap.md` gains a **disqualifier rubric**: a change is routed to
+  the full process if it touches architecture/module boundaries, introduces a
+  new abstraction/dependency, changes a public API/contract/data format, alters
+  state ownership or the concurrency model, touches security/auth, or requires
+  weighing multiple design approaches. Otherwise it qualifies as quick-fix.
+
+### Fixed
+
+- `hooks/session-start.sh` resolved the project root via
+  `${CLAUDE_PROJECT_DIR:-.}`, falling back to `.` — which `pre-tool-use.sh`
+  explicitly rejects. When `CLAUDE_PROJECT_DIR` was unset it cleared state
+  markers in the wrong directory. It now reads stdin `.cwd` and uses the
+  identical resolution chain (`.cwd` → `$CLAUDE_PROJECT_DIR` → `$PWD`).
+- `hooks/session-start.sh` now also clears a stale
+  `.zeus/state/quick-fix-active` on session start, so a leaked bypass marker
+  can't keep the write gate open into a new session.
+- `hooks/pre-tool-use.sh` block message is now actionable — it points at
+  `/quick-fix` (with the eligibility rubric) and `/brainstorm`, instead of a
+  dead-end "use the quick-fix bypass" with no instructions.
+
 ## [0.12.0] — 2026-06-29
 
 ### Added
