@@ -60,7 +60,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
    - **Completeness rule:** each layer must have ≥ 1 captured note. Empty layer = unfinished brainstorm. For mode [2]/[3], two genuinely different designs must be generated; if only one viable appr, drop to mode [1].
 7. **Write spec** to `.zeus/specs/<YYYY-MM-DD>-<topic>-design.md` with 6 fixed sections:
    - `## Goal / Scope` ← L1. MUST contain a `### Scope Checklist`: list each discrete, testable capability as `- **SC-N** — <capability>` with stable, never-reused IDs (`SC-1`, `SC-2`, …). This checklist is the single source of truth that `writing-plans` maps to tasks and `scripts/check-spec-coverage.sh` verifies mechanically — a capability not listed here can be silently dropped downstream.
-   - `## Architecture / Context dependencies` ← L2
+   - `## Architecture / Context dependencies` ← L2. MUST contain a `### Constraint Exemptions` subsection: the literal `(none)` XOR one or more records `- **EX-N** — exempts EC-K — scope: <files/feature> — reason: <why>` (normative grammar: `references/engineering-constraints.md`; `scripts/check-constraint-exemptions.sh` verifies it mechanically at the gates). EX-IDs are stable and never reused. A conversational exemption counts only once transcribed here.
    - `## Environment requirements` ← L3
    - `## Definition of Done delta` ← L4 (will patch the project contract's `## Definition of Done`). Write `(none)` explicitly if empty.
    - `## Handoff state requirements` ← L5
@@ -68,7 +68,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
 
    *Pre-relocation zeus projects wrote specs to `.zeus/specs/`. If your project still has that path, run `scripts/migrate-to-dotzeus.sh` once.*
 8. **Update `.zeus/features.md`** — F-NNN status → `in-progress`, add spec link.
-9. **Spec self-review** — placeholder scan, internal consistency, scope check, ambiguity. Verify `## Goal / Scope` contains a `### Scope Checklist` and every `SC-N` item is atomic + testable (one capability, provable by a command). Fix inline.
+9. **Spec self-review** — placeholder scan, internal consistency, scope check, ambiguity. Verify `## Goal / Scope` contains a `### Scope Checklist` and every `SC-N` item is atomic + testable (one capability, provable by a command). Verify `## Architecture / Context dependencies` contains a `### Constraint Exemptions` subsection — `(none)` XOR well-formed EX records (`bash scripts/check-constraint-exemptions.sh <spec>` exits 0 where the checker is available). Fix inline.
 10. **User reviews spec.** Wait for approval or change requests.
 11. **On approval** — run: `echo "<spec-file-path>" > .zeus/state/spec-approved && rm -f .zeus/state/brainstorming-active` — then invoke `zeus:writing-plans`.
 
@@ -90,7 +90,7 @@ Complete these items in order. Scale depth to the task — a simple feature gets
 
 ## Verification checklist
 
-Before handing off, confirm: project contract was read; F-NNN target chosen; mode was selected; all 5 layers have ≥ 1 note; spec file exists with all 6 sections; .zeus/features.md updated; user explicitly approved.
+Before handing off, confirm: project contract was read; F-NNN target chosen; mode was selected; all 5 layers have ≥ 1 note; spec file exists with all 6 sections (including the `### Constraint Exemptions` subsection); .zeus/features.md updated; user explicitly approved.
 
 ## Integration
 
