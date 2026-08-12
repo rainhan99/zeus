@@ -30,7 +30,7 @@ The contract is either `CLAUDE.md` (Claude Code convention) or `AGENTS.md` (zeus
 2. **Confirm contract mode.** Re-state the contract file selected in step 0 (e.g., "Writing to CLAUDE.md (CLAUDE.md-aware mode); DoD will land in .zeus/dod.md.") so the user can correct before interviewing.
 3. **Classify (amend mode only).** For each field, classify as UNCHANGED / DRIFT / NEW against the chosen contract file. Show the user the counts before interviewing.
 4. **Interview gaps.** Ask the user, one question at a time, only about fields that detection cannot resolve OR that detection contradicts the existing contract (DRIFT). Use multiple-choice when possible.
-5. **Write the chosen contract file.** Use `templates/CLAUDE.md.tmpl` when the chosen contract is `CLAUDE.md`, or `templates/AGENTS.md.tmpl` when it is `AGENTS.md`. Substitute detected + interviewed values into the 5 sections. In CLAUDE.md-aware mode with the `.zeus/dod.md` destination, write the DoD checkboxes there and leave `CLAUDE.md`'s `## Definition of Done` section pointing to the external file.
+5. **Write the chosen contract file.** Use `templates/CLAUDE.md.tmpl` when the chosen contract is `CLAUDE.md`, or `templates/AGENTS.md.tmpl` when it is `AGENTS.md`. Substitute detected + interviewed values into the 6 sections (`## Engineering Constraints` ships with its `- (none)` standing-exemption anchor as-is unless the user declares exemptions during the interview). In CLAUDE.md-aware mode with the `.zeus/dod.md` destination, write the DoD checkboxes there and leave `CLAUDE.md`'s `## Definition of Done` section pointing to the external file.
 6. **Verify.** Run the commands in the Verification checklist against the chosen contract file. Repeat phase 4 if any verification fails.
 7. **Handoff.** Tell the user: "Contract ready at <chosen file>. Run `zeus:kickoff-definition-of-done` next to refine the DoD section into command-verifiable items."
 
@@ -115,9 +115,10 @@ Subjective fields (always ask, never invent):
 After writing the chosen contract file, run these commands against it (substitute `$CONTRACT` for the file selected in step 0 — either `CLAUDE.md` or `AGENTS.md`). All must exit 0:
 
 - `[ -f "$CONTRACT" ]`
-- `[ "$(grep -c '^## ' "$CONTRACT")" -ge 5 ]` (all 5 required sections present)
+- `[ "$(grep -c '^## ' "$CONTRACT")" -ge 6 ]` (all 6 required sections present)
 - `grep -q '^## Tech Stack$' "$CONTRACT"`
 - `grep -q '^## Conventions$' "$CONTRACT"`
+- `grep -q '^## Engineering Constraints$' "$CONTRACT"`
 - `grep -q '^## Commands$' "$CONTRACT"`
 - `grep -q '^## Definition of Done$' "$CONTRACT"`
 - `grep -q '^## Invariants$' "$CONTRACT"`

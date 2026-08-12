@@ -89,6 +89,12 @@ EX-IDs are stable within a spec and never reused. `(none)` and EX records are
 mutually exclusive. `scripts/check-constraint-exemptions.sh <spec>` mechanically
 enforces this grammar (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage).
 
+The subsection heading must be spelled exactly `### Constraint Exemptions`
+(level-3, exact casing, no trailing decoration) — the checker matches it
+literally. A leading `- ` before `(none)` and leading indentation before records
+are tolerated; prose lines inside the subsection may mention EX-IDs, but every
+list-item line naming an EX-ID must be a fully well-formed record.
+
 ## Diff discipline (Surgical Changes)
 
 Touch only the lines the request requires. Clean up only what your own change

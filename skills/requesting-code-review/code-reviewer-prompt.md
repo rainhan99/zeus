@@ -93,7 +93,8 @@ Task tool (code-reviewer or general-purpose):
       exemption) — an unmatched hit is an Important finding.
 
     **Production Readiness:**
-    - Migration strategy (if schema changes)?
+    - Migration strategy (if schema changes — an ops concern distinct from EC-1
+      code-compat; cite the governing exemption if one applies)?
     - Backward compatibility deliberately dropped unless a declared exemption keeps it (EC-1)?
     - No obvious bugs?
 
