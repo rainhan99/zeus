@@ -9,6 +9,51 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-08-12
+
+### Added
+
+- **F-004 — Plugin-carried default engineering constraints.** Eight defaults
+  (EC-1..EC-8: no backward compat, simplest implementation, grow-in-layers,
+  modularity/SoC, prefer mature libraries, check existing deps first, long-term
+  architecture decisions, proven patterns first) now ship with the plugin and
+  are injected into every session via the SessionStart bootstrap digest —
+  installing zeus on any machine activates them. Canonical text + override
+  protocol: `references/engineering-constraints.md`.
+- **Traceable exemption protocol.** Deviating from a default requires a
+  recorded declaration: standing exemptions live in the project contract's
+  `## Engineering Constraints` section (contract templates now seed the
+  anchor); per-feature exemptions are `EX-N` records in the spec's mandatory
+  `### Constraint Exemptions` subsection (`(none)` XOR records). A spoken
+  exemption counts only once transcribed into the spec. Precedence: project
+  contract > spec EX record > default.
+- `scripts/check-constraint-exemptions.sh` — mechanical validator of the spec
+  subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
+  wired into `e2e-gate` (second G5 entry-condition) and
+  `verification-before-completion`. 9-assert harness
+  (`tests/check-constraint-exemptions.test.sh`) + 7 fixtures pin the grammar,
+  including region-scoping decoy cases.
+- Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
+  **Engineering Constraints audit block** — an observed deviation with no
+  matching exemption record is an Important finding.
+- `writing-plans` gains a per-requirement **Constraint audit** lens (EC-1,
+  EC-5/EC-6, EC-7) and a Logic-Completeness-Manifest carry-forward of the
+  spec's exemptions.
+
+### Changed
+
+- Review-template line "Backward compatibility considered?" now reads
+  "Backward compatibility deliberately dropped unless a declared exemption
+  keeps it (EC-1)?" — the old wording rewarded what EC-1 forbids.
+
+### Removed
+
+- `references/karpathy-principles.md` — superseded by
+  `references/engineering-constraints.md` (Simplicity First folded into EC-2's
+  elaboration, Surgical Changes carried over as "Diff discipline"). All three
+  skill citations swapped in the same change; per EC-1, no compatibility stub
+  left behind.
+
 ## [0.13.0] — 2026-07-01
 
 ### Added
