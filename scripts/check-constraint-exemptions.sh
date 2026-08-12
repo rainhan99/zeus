@@ -11,6 +11,15 @@
 # Judged ONLY inside the region between the '### Constraint Exemptions' heading
 # and the next heading of any level — '(none)' or EX text elsewhere in the spec
 # is prose, never a declaration (same scoping philosophy as check-spec-coverage.sh).
+# Only list-item lines ('-'/'*'/'+' bullets) are candidate records: prose
+# sentences inside the subsection may mention EX-IDs freely. A leading '- '
+# before (none) and leading indentation before records are tolerated.
+# Known limits (documented, deliberately unhandled — see F-004 review):
+#   - fenced code blocks are not tracked; a heading or record inside ``` fences
+#     is treated as real. Meta-specs quoting the grammar should keep examples
+#     outside the subsection.
+#   - EX-ID uniqueness ("never reused") is normative prose, not checked here.
+#   - the heading must be spelled exactly '### Constraint Exemptions'.
 # NOTE: set -u (not set -e) — grep -c returning 1 on zero matches is a valid
 # result here, not a fatal error.
 set -u
@@ -30,7 +39,7 @@ if [ ! -f "$spec" ] || [ ! -r "$spec" ]; then usage; fi
 # the heading never appeared, so a missing region is distinguishable from an
 # empty one.
 region="$(awk '
-  /^###[ \t]+Constraint Exemptions[ \t]*$/ { inregion = 1; found = 1; next }
+  /^###[ \t]+Constraint Exemptions[ \t\r]*$/ { inregion = 1; found = 1; next }
   inregion && /^#+[ \t]/ { inregion = 0 }
   inregion { print }
   END { exit found ? 0 : 3 }
@@ -39,9 +48,9 @@ region="$(awk '
   exit 1
 }
 
-n_none="$(printf '%s\n' "$region" | grep -cE '^[ \t]*\(none\)[ \t]*$' || true)"
-n_ex="$(printf '%s\n' "$region" | grep -cE '^- \*\*EX-[0-9]+\*\* — exempts EC-[1-8] — scope: .+ — reason: .+$' || true)"
-n_exlike="$(printf '%s\n' "$region" | grep -cE 'EX-[0-9]+' || true)"
+n_none="$(printf '%s\n' "$region" | grep -cE '^[ \t]*(- )?\(none\)[ \t\r]*$' || true)"
+n_ex="$(printf '%s\n' "$region" | grep -cE '^[ \t]*- \*\*EX-[0-9]+\*\* — exempts EC-[1-8] — scope: .+ — reason: .+$' || true)"
+n_exlike="$(printf '%s\n' "$region" | grep -cE '^[ \t]*[-*+][ \t].*EX-' || true)"
 
 if [ "$n_exlike" -gt "$n_ex" ]; then
   printf 'MALFORMED: %s EX-looking line(s) fail the grammar in %s (need: - **EX-n** — exempts EC-k — scope: ... — reason: ...)\n' \
