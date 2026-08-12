@@ -28,6 +28,7 @@ Code review catches issues before they cascade. Dispatching a structured review 
    - `{HEAD_SHA}` — ending commit
    - `{DESCRIPTION}` — brief summary
    - `{AGENTS_MD_CONVENTIONS}` — relevant conventions and file-size thresholds
+   - `{CONSTRAINT_EXEMPTIONS}` — the spec's `### Constraint Exemptions` content plus any standing exemptions from the project contract's `## Engineering Constraints` section; literally `(none)` when both are empty. Findings must map `EX-N` records to observed deviations.
 
 3. **Act on feedback** using `zeus:receiving-code-review`:
    - Fix Critical issues immediately.
