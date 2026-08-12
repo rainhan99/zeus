@@ -46,6 +46,9 @@ assert "decoy"     1  "MISSING"   "$FIX/ex-spec-decoy.md"
 assert "mixed"     1  "MIXED"     "$FIX/ex-spec-mixed.md"
 assert "malformed" 1  "MALFORMED" "$FIX/ex-spec-malformed.md"
 assert "empty"     1  "MALFORMED" "$FIX/ex-spec-empty.md"
+assert "prose-ok"       0  "OK: 1"     "$FIX/ex-spec-prose.md"
+assert "none-bullet-ok" 0  "OK"        "$FIX/ex-spec-none-bullet.md"
+assert "indented-ok"    0  "OK: 1"     "$FIX/ex-spec-indented.md"
 assert_code "usage-noargs"  64
 assert_code "usage-missing" 64 "$FIX/does-not-exist.md"
 
