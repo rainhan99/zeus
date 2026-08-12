@@ -36,6 +36,11 @@ G4 and G5 are sequential. G4 must pass before G5 runs. If G4 fails, there is no 
 - **exit 1** → orphan `SC-N`(s) listed. Reconcile each against the plan's Logic Completeness Manifest authorized-cuts. Any genuine orphan (a spec feature with no implementation) keeps **G5 closed** → route back to `zeus:writing-plans`.
 - **exit 2 (degraded), or script absent** → **announce** "running degraded coverage audit (spec has no SC-IDs / detector absent)", then re-read the spec prose and confirm by hand that every enumerated feature has fresh evidence. Never silently skip the cross-check.
 
+**G5 entry-condition — Constraint exemptions check (same position, runs second).** If `scripts/check-constraint-exemptions.sh` exists, run `bash scripts/check-constraint-exemptions.sh <spec>`:
+- **exit 0** → the spec's `### Constraint Exemptions` subsection is well-formed (`(none)` XOR EX records); proceed.
+- **exit 1** → subsection missing, malformed, or mixed — **G5 stays closed**; route back to `zeus:brainstorming` to record the declaration properly. Only the active feature's spec is checked; specs authored before F-004 are never fed to the checker.
+- **script absent** → **announce** "running degraded exemptions audit (checker absent)", then confirm the subsection by hand. Never silently skip.
+
 Beyond presence in the matrix, every `SC-N` must have **fresh verification evidence** before G5 opens (see `zeus:verification-before-completion`).
 
 6. **Identify the realistic user path.** Read the plan's Test Plan section (E2E tests subsection). If no E2E test is defined, construct one: what would a real user do from start to finish?
