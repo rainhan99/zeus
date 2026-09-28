@@ -30,17 +30,22 @@ messages — this CHANGELOG starts at v0.11.1.
 - `scripts/check-constraint-exemptions.sh` — mechanical validator of the spec
   subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
   wired into `e2e-gate` (second G5 entry-condition) and
-  `verification-before-completion`. 29-assert harness
+  `verification-before-completion`. 61-assert harness
   (`tests/check-constraint-exemptions.test.sh`) + 26 fixtures pin the grammar:
   region-scoping decoys, prose lines (bold EX-IDs included), bullet `(none)`,
   CRLF and tab-indented declarations, `(none)` beside a bare, numbered (`1.` /
   `1)`), `*`-bullet, indented, or malformed bullet record, a list item
   containing `INDEX-2`, whitespace-only scope or reason fields, fields whose
   text follows extra blanks, and an input path shaped like an awk assignment.
-  Fixtures whose meaning depends on CR, tab, or blank bytes are checked for
-  those bytes before use. Only record-shaped lines — a list item naming an
-  EX-ID, or a line opening with a bold `**EX-<n>**` — must be well-formed
-  records.
+  32 probes add usage errors (an extra argument, a directory, an unreadable
+  file; the last is skipped as root), heading and region edges, the `(none)`
+  line, record tokens (two-digit EX-IDs, the EC-1..EC-8 range, the first two
+  em-dashes, `exempts`, the field labels, bold around the EX-ID), and which
+  lines beside `(none)` count as record-shaped. Fixtures whose meaning depends
+  on CR, tab, or blank bytes are checked for those bytes before use; probe
+  specs are written byte-exact at runtime. Only record-shaped lines — a list
+  item naming an EX-ID, or a line opening with a bold `**EX-<n>**` — must be
+  well-formed records.
 - Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
   **Engineering Constraints audit block** — an observed deviation with no
   matching exemption record is an Important finding.
