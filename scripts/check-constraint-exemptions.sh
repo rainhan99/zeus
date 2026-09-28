@@ -11,10 +11,10 @@
 # Judged ONLY inside the region between the '### Constraint Exemptions' heading
 # and the next heading of any level — '(none)' or EX text elsewhere in the spec
 # is prose, never a declaration (same scoping philosophy as check-spec-coverage.sh).
-# A line is an EX-looking candidate when it is a list item ('-'/'*'/'+' bullet
-# or '1.'/'1)' number) naming an EX-ID, or when it carries a bold '**EX-<n>**'
-# or the phrase 'exempts EC-' anywhere; every candidate must be a well-formed
-# record. Plain prose inside the subsection may still mention EX-IDs.
+# A line is an EX-looking candidate when it looks like a record: a list item
+# ('-'/'*'/'+' bullet or '1.'/'1)' number) naming a word-bounded EX-ID, or a line
+# opening with a bold '**EX-<n>**'. Every candidate must be a well-formed record;
+# other prose inside the subsection may mention EX-IDs freely.
 # Tolerated: a leading '- ' before (none), leading spaces or tabs, trailing
 # blanks, and CRLF line endings (region lines are read with the CR stripped).
 # Known limits (documented, deliberately unhandled — see F-004 review):
@@ -56,7 +56,7 @@ region="$(awk '
 
 n_none="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*(- )?\(none\)[[:blank:]]*$' || true)"
 n_ex="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*- \*\*EX-[0-9]+\*\* — exempts EC-[1-8] — scope: .+ — reason: .+$' || true)"
-n_exlike="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*([-*+]|[0-9]+[.)])[[:blank:]].*EX-|\*\*EX-[0-9]+\*\*|exempts EC-' || true)"
+n_exlike="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*([-*+]|[0-9]+[.)])[[:blank:]](.*[^[:alnum:]])?EX-[0-9]|^[[:blank:]]*\*\*EX-[0-9]' || true)"
 
 if [ "$n_exlike" -gt "$n_ex" ]; then
   printf 'MALFORMED: %s EX-looking line(s) fail the grammar in %s (need: - **EX-n** — exempts EC-k — scope: ... — reason: ...)\n' \
