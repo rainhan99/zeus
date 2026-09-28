@@ -14,13 +14,14 @@ check() { # <name> <condition-exit> ; reads $? via caller
 }
 
 FIX="$(mktemp -d)"
+[ -n "$FIX" ] && [ -d "$FIX" ] || { echo "FAIL  fixture setup: mktemp -d failed"; exit 1; }
 trap 'rm -rf "$FIX"' EXIT
 mkdir -p "$FIX/.zeus/state"
 : > "$FIX/.zeus/state/quick-fix-active"      # plant a stale marker
 : > "$FIX/.zeus/state/spec-approved"          # plant (should also be cleared)
-# Fail loudly if the fixture could not be built: the deletion assertions below
-# would otherwise pass vacuously when the markers were never planted.
-if [ -z "$FIX" ] || [ ! -e "$FIX/.zeus/state/quick-fix-active" ] || [ ! -e "$FIX/.zeus/state/spec-approved" ]; then
+# Fail loudly if the markers were not planted: the deletion assertions below
+# would otherwise pass vacuously.
+if [ ! -e "$FIX/.zeus/state/quick-fix-active" ] || [ ! -e "$FIX/.zeus/state/spec-approved" ]; then
   echo "FAIL  fixture setup: could not plant markers under '$FIX'"
   exit 1
 fi
