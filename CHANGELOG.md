@@ -30,11 +30,13 @@ messages — this CHANGELOG starts at v0.11.1.
 - `scripts/check-constraint-exemptions.sh` — mechanical validator of the spec
   subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
   wired into `e2e-gate` (second G5 entry-condition) and
-  `verification-before-completion`. 18-assert harness
-  (`tests/check-constraint-exemptions.test.sh`) + 16 fixtures pin the grammar:
-  region-scoping decoys, prose lines, bullet `(none)`, CRLF and tab-indented
-  declarations, `(none)` beside a non-bullet record, and an input path shaped
-  like an awk assignment.
+  `verification-before-completion`. 21-assert harness
+  (`tests/check-constraint-exemptions.test.sh`) + 19 fixtures pin the grammar:
+  region-scoping decoys, prose lines (bold EX-IDs included), bullet `(none)`,
+  CRLF and tab-indented declarations, `(none)` beside a bare, numbered, or
+  malformed bullet record, a list item containing `INDEX-2`, and an input path
+  shaped like an awk assignment. Only record-shaped lines — a list item naming an
+  EX-ID, or a line opening with a bold `**EX-<n>**` — must be well-formed records.
 - Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
   **Engineering Constraints audit block** — an observed deviation with no
   matching exemption record is an Important finding.
@@ -68,10 +70,11 @@ messages — this CHANGELOG starts at v0.11.1.
 
 ### Fixed
 
-- `check-spec-coverage.sh` reads its plan on stdin, so a path shaped like an awk
-  assignment (e.g. `x=1.md`) is no longer misread as one.
+- `check-spec-coverage.sh` reads its spec and plan on stdin, so a path shaped like
+  an awk assignment (`x=1.md`) or starting with `-` is no longer misread.
 - `tests/session-start.test.sh` and `tests/pre-tool-use-msg.test.sh` fail loudly
-  when their fixture cannot be built, instead of passing vacuously.
+  when their fixture cannot be built: session-start used to pass vacuously, and
+  pre-tool-use-msg reported hook failures that were really setup failures.
 - `session-handoff` and `memory-management` reference
   `references/project-contract.md` (SP-relocate DoD item).
 
