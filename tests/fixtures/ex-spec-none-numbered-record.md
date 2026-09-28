@@ -1,10 +1,10 @@
-# Fixture: (none) next to a record written as a numbered item
+# Fixture: (none) next to a numbered item naming an EX-ID (no bold, no 'exempts')
 
 ## Architecture / Context dependencies
 
 ### Constraint Exemptions
 
 (none)
-1. **EX-1** — exempts EC-1 — scope: storage/schema.sql — reason: contradicts the (none) above.
+1. EX-1 — scope: storage/schema.sql — reason: contradicts the (none) above.
 
 ## Environment requirements

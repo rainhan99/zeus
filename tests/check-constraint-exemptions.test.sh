@@ -54,6 +54,9 @@ assert "tab-none-ok"           0  "OK"        "$FIX/ex-spec-tab-none.md"
 assert "tab-record-ok"         0  "OK: 1"     "$FIX/ex-spec-tab-record.md"
 assert "none-bare-record"      1  "MALFORMED" "$FIX/ex-spec-none-bare-record.md"
 assert "none-numbered-record"  1  "MALFORMED" "$FIX/ex-spec-none-numbered-record.md"
+assert "none-bullet-malformed" 1  "MALFORMED" "$FIX/ex-spec-none-bullet-malformed.md"
+assert "none-prose-bold-ok"    0  "OK"        "$FIX/ex-spec-none-prose-bold.md"
+assert "none-index-word-ok"    0  "OK"        "$FIX/ex-spec-none-index-word.md"
 # awk must read the spec on stdin: a relative path shaped like an awk
 # assignment (identifier=value) would otherwise be taken as one.
 out="$(cd "$FIX" && bash "$CHECKER" 'awkvar=spec.md' </dev/null 2>&1)"; code=$?
