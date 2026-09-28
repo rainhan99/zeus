@@ -48,7 +48,6 @@ assert "malformed" 1  "MALFORMED" "$FIX/ex-spec-malformed.md"
 assert "empty"     1  "MALFORMED" "$FIX/ex-spec-empty.md"
 assert "prose-ok"       0  "OK: 1"     "$FIX/ex-spec-prose.md"
 assert "none-bullet-ok" 0  "OK"        "$FIX/ex-spec-none-bullet.md"
-assert "indented-ok"    0  "OK: 1"     "$FIX/ex-spec-indented.md"
 # The CRLF, tab, and blank-run fixtures test something only while they hold
 # those bytes; an editor or a line-ending conversion would make them vacuous.
 LC_ALL=C grep -q "$(printf '\r')" "$FIX/ex-spec-crlf-none.md" || { echo "FAIL  fixture bytes: ex-spec-crlf-none.md holds no CR"; exit 1; }
@@ -62,6 +61,9 @@ for f in ex-spec-blank-scope.md ex-spec-blank-both.md; do
   grep -q 'scope:[[:blank:]]\{3,\}—' "$FIX/$f" || { echo "FAIL  fixture bytes: $f lost its scope blanks"; exit 1; }
 done
 grep -q 'scope:[[:blank:]]\{2,\}[^[:blank:]].*reason:[[:blank:]]\{2,\}[^[:blank:]]' "$FIX/ex-spec-lead-blank.md" || { echo "FAIL  fixture bytes: ex-spec-lead-blank.md lost its leading blanks"; exit 1; }
+for f in ex-spec-indented.md ex-spec-none-indented-malformed.md; do
+  grep -q '^[[:blank:]]\{1,\}- \*\*EX-' "$FIX/$f" || { echo "FAIL  fixture bytes: $f lost its indentation"; exit 1; }
+done
 assert "crlf-none-ok"          0  "OK"        "$FIX/ex-spec-crlf-none.md"
 assert "tab-none-ok"           0  "OK"        "$FIX/ex-spec-tab-none.md"
 assert "tab-record-ok"         0  "OK: 1"     "$FIX/ex-spec-tab-record.md"
@@ -70,6 +72,7 @@ assert "none-numbered-record"  1  "MALFORMED" "$FIX/ex-spec-none-numbered-record
 assert "none-bullet-malformed" 1  "MALFORMED" "$FIX/ex-spec-none-bullet-malformed.md"
 assert "none-prose-bold-ok"    0  "OK"        "$FIX/ex-spec-none-prose-bold.md"
 assert "none-index-word-ok"    0  "OK"        "$FIX/ex-spec-none-index-word.md"
+assert "indented-ok"    0  "OK: 1"     "$FIX/ex-spec-indented.md"
 assert "none-indented-malformed" 1 "MALFORMED" "$FIX/ex-spec-none-indented-malformed.md"
 assert "none-star-record"      1  "MALFORMED" "$FIX/ex-spec-none-star-record.md"
 assert "none-paren-number"     1  "MALFORMED" "$FIX/ex-spec-none-paren-number.md"
