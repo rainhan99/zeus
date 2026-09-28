@@ -30,10 +30,11 @@ messages — this CHANGELOG starts at v0.11.1.
 - `scripts/check-constraint-exemptions.sh` — mechanical validator of the spec
   subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
   wired into `e2e-gate` (second G5 entry-condition) and
-  `verification-before-completion`. 21-assert harness
-  (`tests/check-constraint-exemptions.test.sh`) + 19 fixtures pin the grammar:
+  `verification-before-completion`. 24-assert harness
+  (`tests/check-constraint-exemptions.test.sh`) + 22 fixtures pin the grammar:
   region-scoping decoys, prose lines (bold EX-IDs included), bullet `(none)`,
-  CRLF and tab-indented declarations, `(none)` beside a bare, numbered, or
+  CRLF and tab-indented declarations (their bytes are checked before use),
+  `(none)` beside a bare, numbered (`1.` / `1)`), `*`-bullet, indented, or
   malformed bullet record, a list item containing `INDEX-2`, and an input path
   shaped like an awk assignment. Only record-shaped lines — a list item naming an
   EX-ID, or a line opening with a bold `**EX-<n>**` — must be well-formed records.
