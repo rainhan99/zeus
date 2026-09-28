@@ -44,9 +44,6 @@ assert_code() {
 # Writes a spec with printf %b (bytes exact, so no guard is needed): <heading>
 # (default '### Constraint Exemptions'), <region>, <after>, then a closing
 # section. Asserts on it like a fixture.
-PROBE="$(mktemp -d)"
-[ -n "$PROBE" ] && [ -d "$PROBE" ] || { echo "FAIL  probe setup: mktemp -d failed"; exit 1; }
-trap 'rm -rf "$PROBE"' EXIT
 probe() {
   printf '# Probe\n\n## Architecture / Context dependencies\n\n%b\n\n%b\n\n%b## Environment requirements\n' \
     "${5:-### Constraint Exemptions}" "$4" "${6:-}" > "$PROBE/$1.md"
@@ -112,6 +109,11 @@ assert_code "usage-missing" 64 "$FIX/does-not-exist.md"
 # Probes: each pins one element of the checker that no fixture above
 # exercises — usage checks, heading and region edges, the (none) line, record
 # tokens, and record-shaped detection beside (none).
+# The probe dir is made here, after the fixture asserts, so a read-only
+# environment still runs those before failing loudly.
+PROBE="$(mktemp -d)"
+[ -n "$PROBE" ] && [ -d "$PROBE" ] || { echo "FAIL  probe setup: mktemp -d failed"; exit 1; }
+trap 'rm -rf "$PROBE"' EXIT
 R='- **EX-1** — exempts EC-1 — scope: a — reason: b'
 assert "two-args"      64 "usage" "$FIX/ex-spec-none.md" "$FIX/ex-spec-none.md"
 assert "directory-arg" 64 "usage" "$PROBE"
