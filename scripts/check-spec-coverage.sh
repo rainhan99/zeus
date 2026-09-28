@@ -46,6 +46,8 @@ fi
 #   3. CELL — an SC-N row (SC-ID is the first content cell, $2, per the mandated
 #      column order) is covered iff its task cell is non-empty and not a
 #      placeholder. Descriptive text in the SC-ID cell is tolerated.
+# The plan is read on stdin, so a path shaped like an awk assignment (e.g.
+# 'x=1.md') is never taken as one.
 covered_ids="$(awk -F'|' '
     /^#+[ \t]/ { inscope = ($0 ~ /Spec Coverage Matrix/ || $0 ~ /Logic Completeness Manifest/) ? 1 : 0; next }
     inscope && /^[ \t]*\|/ && taskcol == 0 {
@@ -56,7 +58,7 @@ covered_ids="$(awk -F'|' '
       t = $taskcol; gsub(/^[ \t]+|[ \t]+$/, "", t); lt = tolower(t);
       if (t != "" && t != "-" && t != "—" && lt != "(none)" && lt != "none" \
           && lt != "tbd" && lt != "todo" && lt != "n/a" && lt != "..." && lt != "?") print $2
-    }' "$plan" 2>/dev/null \
+    }' < "$plan" 2>/dev/null \
   | grep -oE 'SC-[0-9]+' | sort -u || true)"
 
 # Orphans = spec IDs with no covered counterpart (both inputs pre-sorted).
