@@ -28,7 +28,8 @@ if [ ! -f "$plan" ] || [ ! -r "$plan" ]; then usage; fi
 
 # Spec SC-IDs: line-anchored checklist items only ("- **SC-N** ...").
 # Inline mentions in prose / 7-gate maps never start this pattern.
-spec_ids="$(grep -oE '^- \*\*SC-[0-9]+\*\*' "$spec" 2>/dev/null | grep -oE 'SC-[0-9]+' | sort -u || true)"
+# Read on stdin, so a path starting with '-' is never parsed as grep options.
+spec_ids="$(grep -oE '^- \*\*SC-[0-9]+\*\*' < "$spec" 2>/dev/null | grep -oE 'SC-[0-9]+' | sort -u || true)"
 
 if [ -z "$spec_ids" ]; then
   printf 'DEGRADED: no SC-N IDs found in %s — route to manual/LLM audit\n' "$spec"
