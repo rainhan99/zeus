@@ -86,8 +86,10 @@ messages — this CHANGELOG starts at v0.11.1.
 
 Known limitation: outside the zeus repo the skills cannot locate zeus scripts
 yet. G4 (`writing-plans`) and G5 (`e2e-gate`) announce a degraded check and do
-it by hand; G3 (`verification-before-completion`) lists both scripts' exit 0 as
-evidence and has no branch for a missing script. F-005 resolves the scripts
+it by hand; `brainstorming`'s spec self-review (also G4) runs
+`check-constraint-exemptions.sh` only where it is available, without an
+announcement; G3 (`verification-before-completion`) lists both scripts' exit 0
+as evidence and has no branch for a missing script. F-005 resolves the scripts
 from the plugin.
 
 ## [0.13.0] — 2026-07-01
