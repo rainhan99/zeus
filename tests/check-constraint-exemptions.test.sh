@@ -49,6 +49,12 @@ assert "empty"     1  "MALFORMED" "$FIX/ex-spec-empty.md"
 assert "prose-ok"       0  "OK: 1"     "$FIX/ex-spec-prose.md"
 assert "none-bullet-ok" 0  "OK"        "$FIX/ex-spec-none-bullet.md"
 assert "indented-ok"    0  "OK: 1"     "$FIX/ex-spec-indented.md"
+# The CRLF and tab fixtures test something only while they still hold those
+# bytes; an editor or a line-ending conversion would make them vacuous.
+LC_ALL=C grep -q "$(printf '\r')" "$FIX/ex-spec-crlf-none.md" || { echo "FAIL  fixture bytes: ex-spec-crlf-none.md holds no CR"; exit 1; }
+for f in ex-spec-tab-none.md ex-spec-tab-record.md; do
+  grep -q "$(printf '\t')" "$FIX/$f" || { echo "FAIL  fixture bytes: $f holds no tab"; exit 1; }
+done
 assert "crlf-none-ok"          0  "OK"        "$FIX/ex-spec-crlf-none.md"
 assert "tab-none-ok"           0  "OK"        "$FIX/ex-spec-tab-none.md"
 assert "tab-record-ok"         0  "OK: 1"     "$FIX/ex-spec-tab-record.md"
@@ -57,6 +63,9 @@ assert "none-numbered-record"  1  "MALFORMED" "$FIX/ex-spec-none-numbered-record
 assert "none-bullet-malformed" 1  "MALFORMED" "$FIX/ex-spec-none-bullet-malformed.md"
 assert "none-prose-bold-ok"    0  "OK"        "$FIX/ex-spec-none-prose-bold.md"
 assert "none-index-word-ok"    0  "OK"        "$FIX/ex-spec-none-index-word.md"
+assert "none-indented-malformed" 1 "MALFORMED" "$FIX/ex-spec-none-indented-malformed.md"
+assert "none-star-record"      1  "MALFORMED" "$FIX/ex-spec-none-star-record.md"
+assert "none-paren-number"     1  "MALFORMED" "$FIX/ex-spec-none-paren-number.md"
 # awk must read the spec on stdin: a relative path shaped like an awk
 # assignment (identifier=value) would otherwise be taken as one.
 out="$(cd "$FIX" && bash "$CHECKER" 'awkvar=spec.md' </dev/null 2>&1)"; code=$?
