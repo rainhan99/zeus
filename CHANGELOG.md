@@ -36,8 +36,11 @@ messages — this CHANGELOG starts at v0.11.1.
   CRLF and tab-indented declarations (their bytes are checked before use),
   `(none)` beside a bare, numbered (`1.` / `1)`), `*`-bullet, indented, or
   malformed bullet record, a list item containing `INDEX-2`, whitespace-only
-  scope or reason fields, and an input path shaped like an awk assignment. Only record-shaped lines — a list item naming an
-  EX-ID, or a line opening with a bold `**EX-<n>**` — must be well-formed records.
+  scope or reason fields, and an input path shaped like an awk assignment.
+  Only record-shaped lines — a list item naming an EX-ID, or a line opening
+  with a bold `**EX-<n>**` — must be well-formed records. Known limitation:
+  outside the zeus repo the gates cannot locate zeus scripts yet and run the
+  announced manual audit instead; F-005 resolves the scripts from the plugin.
 - Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
   **Engineering Constraints audit block** — an observed deviation with no
   matching exemption record is an Important finding.
