@@ -55,6 +55,9 @@ LC_ALL=C grep -q "$(printf '\r')" "$FIX/ex-spec-crlf-none.md" || { echo "FAIL  f
 for f in ex-spec-tab-none.md ex-spec-tab-record.md; do
   grep -q "$(printf '\t')" "$FIX/$f" || { echo "FAIL  fixture bytes: $f holds no tab"; exit 1; }
 done
+for f in ex-spec-blank-reason.md ex-spec-blank-both.md; do
+  grep -q 'reason:[[:blank:]]\{2,\}$' "$FIX/$f" || { echo "FAIL  fixture bytes: $f lost its trailing blanks"; exit 1; }
+done
 assert "crlf-none-ok"          0  "OK"        "$FIX/ex-spec-crlf-none.md"
 assert "tab-none-ok"           0  "OK"        "$FIX/ex-spec-tab-none.md"
 assert "tab-record-ok"         0  "OK: 1"     "$FIX/ex-spec-tab-record.md"
@@ -66,6 +69,9 @@ assert "none-index-word-ok"    0  "OK"        "$FIX/ex-spec-none-index-word.md"
 assert "none-indented-malformed" 1 "MALFORMED" "$FIX/ex-spec-none-indented-malformed.md"
 assert "none-star-record"      1  "MALFORMED" "$FIX/ex-spec-none-star-record.md"
 assert "none-paren-number"     1  "MALFORMED" "$FIX/ex-spec-none-paren-number.md"
+assert "blank-scope"           1  "MALFORMED" "$FIX/ex-spec-blank-scope.md"
+assert "blank-reason"          1  "MALFORMED" "$FIX/ex-spec-blank-reason.md"
+assert "blank-both"            1  "MALFORMED" "$FIX/ex-spec-blank-both.md"
 # awk must read the spec on stdin: a relative path shaped like an awk
 # assignment (identifier=value) would otherwise be taken as one.
 out="$(cd "$FIX" && bash "$CHECKER" 'awkvar=spec.md' </dev/null 2>&1)"; code=$?
