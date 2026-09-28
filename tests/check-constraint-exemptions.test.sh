@@ -77,6 +77,7 @@ assert "blank-scope"           1  "MALFORMED" "$FIX/ex-spec-blank-scope.md"
 assert "blank-reason"          1  "MALFORMED" "$FIX/ex-spec-blank-reason.md"
 assert "blank-both"            1  "MALFORMED" "$FIX/ex-spec-blank-both.md"
 assert "lead-blank-ok"         0  "OK: 1"     "$FIX/ex-spec-lead-blank.md"
+assert "blank-scope-hint"      1  "non-blank" "$FIX/ex-spec-blank-scope.md"
 # awk must read the spec on stdin: a relative path shaped like an awk
 # assignment (identifier=value) would otherwise be taken as one.
 out="$(cd "$FIX" && bash "$CHECKER" 'awkvar=spec.md' </dev/null 2>&1)"; code=$?
