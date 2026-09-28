@@ -30,17 +30,17 @@ messages — this CHANGELOG starts at v0.11.1.
 - `scripts/check-constraint-exemptions.sh` — mechanical validator of the spec
   subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
   wired into `e2e-gate` (second G5 entry-condition) and
-  `verification-before-completion`. 27-assert harness
-  (`tests/check-constraint-exemptions.test.sh`) + 25 fixtures pin the grammar:
+  `verification-before-completion`. 29-assert harness
+  (`tests/check-constraint-exemptions.test.sh`) + 26 fixtures pin the grammar:
   region-scoping decoys, prose lines (bold EX-IDs included), bullet `(none)`,
-  CRLF and tab-indented declarations (their bytes are checked before use),
-  `(none)` beside a bare, numbered (`1.` / `1)`), `*`-bullet, indented, or
-  malformed bullet record, a list item containing `INDEX-2`, whitespace-only
-  scope or reason fields, and an input path shaped like an awk assignment.
-  Only record-shaped lines — a list item naming an EX-ID, or a line opening
-  with a bold `**EX-<n>**` — must be well-formed records. Known limitation:
-  outside the zeus repo the gates cannot locate zeus scripts yet and run the
-  announced manual audit instead; F-005 resolves the scripts from the plugin.
+  CRLF and tab-indented declarations, `(none)` beside a bare, numbered (`1.` /
+  `1)`), `*`-bullet, indented, or malformed bullet record, a list item
+  containing `INDEX-2`, whitespace-only scope or reason fields, fields whose
+  text follows extra blanks, and an input path shaped like an awk assignment.
+  Fixtures whose meaning depends on CR, tab, or blank bytes are checked for
+  those bytes before use. Only record-shaped lines — a list item naming an
+  EX-ID, or a line opening with a bold `**EX-<n>**` — must be well-formed
+  records.
 - Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
   **Engineering Constraints audit block** — an observed deviation with no
   matching exemption record is an Important finding.
@@ -81,6 +81,14 @@ messages — this CHANGELOG starts at v0.11.1.
   pre-tool-use-msg reported hook failures that were really setup failures.
 - `session-handoff` and `memory-management` reference
   `references/project-contract.md` (SP-relocate DoD item).
+
+### Notes
+
+Known limitation: outside the zeus repo the skills cannot locate zeus scripts
+yet. G4 (`writing-plans`) and G5 (`e2e-gate`) announce a degraded check and do
+it by hand; G3 (`verification-before-completion`) lists both scripts' exit 0 as
+evidence and has no branch for a missing script. F-005 resolves the scripts
+from the plugin.
 
 ## [0.13.0] — 2026-07-01
 
