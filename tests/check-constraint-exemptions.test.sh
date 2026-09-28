@@ -49,6 +49,21 @@ assert "empty"     1  "MALFORMED" "$FIX/ex-spec-empty.md"
 assert "prose-ok"       0  "OK: 1"     "$FIX/ex-spec-prose.md"
 assert "none-bullet-ok" 0  "OK"        "$FIX/ex-spec-none-bullet.md"
 assert "indented-ok"    0  "OK: 1"     "$FIX/ex-spec-indented.md"
+assert "crlf-none-ok"          0  "OK"        "$FIX/ex-spec-crlf-none.md"
+assert "tab-none-ok"           0  "OK"        "$FIX/ex-spec-tab-none.md"
+assert "tab-record-ok"         0  "OK: 1"     "$FIX/ex-spec-tab-record.md"
+assert "none-bare-record"      1  "MALFORMED" "$FIX/ex-spec-none-bare-record.md"
+assert "none-numbered-record"  1  "MALFORMED" "$FIX/ex-spec-none-numbered-record.md"
+# awk must read the spec on stdin: a relative path shaped like an awk
+# assignment (identifier=value) would otherwise be taken as one.
+out="$(cd "$FIX" && bash "$CHECKER" 'awkvar=spec.md' </dev/null 2>&1)"; code=$?
+if [ "$code" -eq 0 ] && printf '%s' "$out" | grep -qF "OK"; then
+  printf 'PASS  %s (exit %s)\n' "awk-assignment-path" "$code"
+  pass=$((pass + 1))
+else
+  printf 'FAIL  %s — expected exit 0 + "OK", got exit %s:\n%s\n' "awk-assignment-path" "$code" "$out"
+  fail=$((fail + 1))
+fi
 assert_code "usage-noargs"  64
 assert_code "usage-missing" 64 "$FIX/does-not-exist.md"
 
