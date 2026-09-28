@@ -38,7 +38,7 @@ G4 and G5 are sequential. G4 must pass before G5 runs. If G4 fails, there is no 
 
 **G5 entry-condition — Constraint exemptions check (same position, runs second).** If `scripts/check-constraint-exemptions.sh` exists, run `bash scripts/check-constraint-exemptions.sh <spec>`:
 - **exit 0** → the spec's `### Constraint Exemptions` subsection is well-formed (`(none)` XOR EX records); proceed.
-- **exit 1** → subsection missing, malformed, or mixed — **G5 stays closed**; route back to `zeus:brainstorming` to record the declaration properly. Only the active feature's spec is checked; specs authored before F-004 are never fed to the checker.
+- **exit 1** → subsection missing, malformed, or mixed — **G5 stays closed**; route back to `zeus:brainstorming` to record the declaration properly. Only the active feature's spec is checked: finished specs authored before F-004 are never fed to the checker, and an in-flight spec that predates the subsection gains it (write `(none)` when nothing is exempted) before G5 opens.
 - **script absent** → **announce** "running degraded exemptions audit (checker absent)", then confirm the subsection by hand. Never silently skip.
 
 Beyond presence in the matrix, every `SC-N` must have **fresh verification evidence** before G5 opens (see `zeus:verification-before-completion`).

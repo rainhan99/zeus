@@ -93,8 +93,9 @@ Task tool (code-reviewer or general-purpose):
       exemption) — an unmatched hit is an Important finding.
 
     **Production Readiness:**
-    - Migration strategy (if schema changes — an ops concern distinct from EC-1
-      code-compat; cite the governing exemption if one applies)?
+    - Migration strategy (if schema changes): one-way, moving existing data to the new
+      shape and deleting the old path (EC-1)? A migration that keeps the old shape
+      usable (dual read/write, shim, rollback path) needs a declared exemption.
     - Backward compatibility deliberately dropped unless a declared exemption keeps it (EC-1)?
     - No obvious bugs?
 

@@ -13,11 +13,18 @@ treats it as a finding.
 
 ## The constraints
 
+EC-IDs are stable and never reused; a new constraint takes the next free number.
+
 ### EC-1 — No backward compatibility
 
 Delete obsolete code outright. No compatibility layers, no migration shims, no
 fallback paths kept "just in case". When something is superseded, remove it in the
 same change that supersedes it.
+
+A migration is forbidden when it keeps the old shape usable: dual reads or writes,
+compatibility shims, rollback paths. A one-way migration that moves existing data
+to the new shape and deletes the old path in the same change needs no exemption:
+it is how the old thing gets deleted.
 
 ### EC-2 — Simplest implementation that meets current needs
 

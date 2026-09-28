@@ -60,7 +60,7 @@ transcribed there). Precedence: project contract > spec EX record > default. An
 undeclared deviation is a review finding. Full text + protocol: zeus
 `references/engineering-constraints.md`.
 
-- **EC-1** No backward compatibility: delete obsolete code outright — no compat layers, no migrations, no fallbacks.
+- **EC-1** No backward compatibility: delete obsolete code outright — no compat layers, no fallbacks, no migration that keeps the old shape usable (a one-way migration that deletes the old path is fine).
 - **EC-2** Simplest implementation that meets current needs — no preventive abstraction, no gratuitous config layers.
 - **EC-3** Grow in layers: minimal end-to-end version first; never dismantle working code for unfinished complexity.
 - **EC-4** Keep components modular; separate concerns.
