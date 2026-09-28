@@ -30,9 +30,11 @@ messages — this CHANGELOG starts at v0.11.1.
 - `scripts/check-constraint-exemptions.sh` — mechanical validator of the spec
   subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
   wired into `e2e-gate` (second G5 entry-condition) and
-  `verification-before-completion`. 9-assert harness
-  (`tests/check-constraint-exemptions.test.sh`) + 7 fixtures pin the grammar,
-  including region-scoping decoy cases.
+  `verification-before-completion`. 18-assert harness
+  (`tests/check-constraint-exemptions.test.sh`) + 16 fixtures pin the grammar:
+  region-scoping decoys, prose lines, bullet `(none)`, CRLF and tab-indented
+  declarations, `(none)` beside a non-bullet record, and an input path shaped
+  like an awk assignment.
 - Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
   **Engineering Constraints audit block** — an observed deviation with no
   matching exemption record is an Important finding.
@@ -45,6 +47,16 @@ messages — this CHANGELOG starts at v0.11.1.
 - Review-template line "Backward compatibility considered?" now reads
   "Backward compatibility deliberately dropped unless a declared exemption
   keeps it (EC-1)?" — the old wording rewarded what EC-1 forbids.
+- EC-1 states its migration rule: a migration that keeps the old shape usable
+  (dual read/write, shims, rollback paths) needs an exemption; a one-way
+  migration that deletes the old path does not. The bootstrap digest and the
+  review template's migration item say the same.
+- `zeus:kickoff-agents-md` writes and verifies six contract sections, including
+  the new `## Engineering Constraints` anchor; amend mode adds it to older
+  five-section contracts. `references/project-contract.md` documents the six
+  sections (an absent `## Engineering Constraints` means no standing exemptions).
+- `e2e-gate`: an in-flight spec written before F-004 gains the
+  `### Constraint Exemptions` subsection before G5 opens.
 
 ### Removed
 
@@ -53,6 +65,15 @@ messages — this CHANGELOG starts at v0.11.1.
   elaboration, Surgical Changes carried over as "Diff discipline"). All three
   skill citations swapped in the same change; per EC-1, no compatibility stub
   left behind.
+
+### Fixed
+
+- `check-spec-coverage.sh` reads its plan on stdin, so a path shaped like an awk
+  assignment (e.g. `x=1.md`) is no longer misread as one.
+- `tests/session-start.test.sh` and `tests/pre-tool-use-msg.test.sh` fail loudly
+  when their fixture cannot be built, instead of passing vacuously.
+- `session-handoff` and `memory-management` reference
+  `references/project-contract.md` (SP-relocate DoD item).
 
 ## [0.13.0] — 2026-07-01
 
