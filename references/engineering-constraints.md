@@ -92,7 +92,8 @@ The spec subsection contains either the literal `(none)` or one or more records:
 
     - **EX-<n>** — exempts EC-<k> — scope: <files or feature area> — reason: <why>
 
-EX-IDs are stable within a spec and never reused. `(none)` and EX records are
+EX-IDs are stable within a spec and never reused; scope and reason must each hold
+non-blank text. `(none)` and EX records are
 mutually exclusive. `scripts/check-constraint-exemptions.sh <spec>` mechanically
 enforces this grammar (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage).
 

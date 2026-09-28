@@ -8,6 +8,7 @@
 #
 # Grammar (normative source: references/engineering-constraints.md):
 #   - **EX-<n>** — exempts EC-<k> — scope: <text> — reason: <text>
+# where scope and reason must each hold non-blank text.
 # Judged ONLY inside the region between the '### Constraint Exemptions' heading
 # and the next heading of any level — '(none)' or EX text elsewhere in the spec
 # is prose, never a declaration (same scoping philosophy as check-spec-coverage.sh).
@@ -55,7 +56,7 @@ region="$(awk '
 }
 
 n_none="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*(- )?\(none\)[[:blank:]]*$' || true)"
-n_ex="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*- \*\*EX-[0-9]+\*\* — exempts EC-[1-8] — scope: .+ — reason: .+$' || true)"
+n_ex="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*- \*\*EX-[0-9]+\*\* — exempts EC-[1-8] — scope: [[:blank:]]*[^[:blank:]].* — reason: [[:blank:]]*[^[:blank:]].*$' || true)"
 n_exlike="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*([-*+]|[0-9]+[.)])[[:blank:]](.*[^[:alnum:]])?EX-[0-9]|^[[:blank:]]*\*\*EX-[0-9]' || true)"
 
 if [ "$n_exlike" -gt "$n_ex" ]; then
