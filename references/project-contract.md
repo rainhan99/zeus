@@ -6,7 +6,7 @@
 
 Zeus skills used to hard-code `AGENTS.md` as the project's binding contract. Projects that already adopted `CLAUDE.md` (the Claude Code convention) were forced to maintain a duplicate. This reference defines the single precedence chain every zeus skill follows when reading the project contract, so contract reading is the same protocol everywhere — no skill invents its own fallback logic, no project maintains two parallel contracts.
 
-The contract carries five sections that zeus relies on: `## Tech Stack`, `## Conventions`, `## Commands`, `## Definition of Done`, `## Invariants`. Both `CLAUDE.md` and `AGENTS.md` use the same section headings and parse identically. Picking one file is a project-level choice; reading sections out of it is a uniform protocol.
+The contract carries six sections that zeus relies on: `## Tech Stack`, `## Conventions`, `## Engineering Constraints`, `## Commands`, `## Definition of Done`, `## Invariants`. Both `CLAUDE.md` and `AGENTS.md` use the same section headings and parse identically. Picking one file is a project-level choice; reading sections out of it is a uniform protocol.
 
 ## Precedence chain
 
@@ -28,6 +28,7 @@ After selecting the contract file, extract these sections by markdown heading. H
 |---|---|
 | `## Tech Stack` | `writing-plans` (per-stack architect analysis), `executing-plans` |
 | `## Conventions` | every skill that respects naming/commit/file-size conventions |
+| `## Engineering Constraints` | `writing-plans` (constraint audit), `requesting-code-review` (standing exemptions) |
 | `## Commands` | `test-driven-development`, `e2e-gate`, `dispatching-parallel-agents`, `using-git-worktrees`, `clean-state` |
 | `## Definition of Done` | `e2e-gate` (G4), `kickoff-definition-of-done`, `executing-plans` |
 | `## Invariants` | `executing-plans`, `receiving-code-review`, `requesting-code-review` |
@@ -69,6 +70,7 @@ The function prints the file name (relative to the project root) on stdout and r
 | Only `AGENTS.md` present | Used as contract. No CLAUDE.md prompt. |
 | Neither present | Skill-specific. `using-zeus` and `session-init` proceed with zeus plugin rules only and log a lesson; planning skills (`brainstorming`, `writing-plans`, `executing-plans`) refuse and redirect to `zeus:kickoff-agents-md`. |
 | Contract file present but a required section is missing | Skill prompts user to run the matching kickoff skill (e.g., empty `## Definition of Done` → `zeus:kickoff-definition-of-done`). Skill does NOT silently invent defaults. |
+| `## Engineering Constraints` absent (contract written before zeus 0.14.0) | Not a missing required section: the project declares no standing exemptions. `zeus:kickoff-agents-md` amend mode adds the section with `- (none)`. |
 | Contract file is a symlink | Resolve and read — supported. `kickoff-*` skills must NOT migrate symlinked contracts. |
 | `~/.claude/CLAUDE.md` (user-global) | Ignored by zeus. Only project-root CLAUDE.md counts. |
 | Contract file empty (zero bytes) | Treat as "present but every section is missing" — kickoff path. |
