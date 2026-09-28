@@ -49,6 +49,16 @@ assert "placeholder"   1 "SC-1" "$FIX/sc-spec-full.md" "$FIX/sc-plan-placeholder
 # Regression for R-1: a 2nd task-header table OUTSIDE the Manifest section must
 # not mask a true orphan dropped by the real matrix.
 assert "stale-matrix"  1 "SC-2" "$FIX/sc-spec-full.md" "$FIX/sc-plan-stale-matrix.md"
+# awk must read the plan on stdin: a relative path shaped like an awk
+# assignment (identifier=value) would otherwise be taken as one.
+out="$(cd "$FIX" && bash "$DETECTOR" sc-spec-full.md 'awkvar=plan.md' </dev/null 2>&1)"; code=$?
+if [ "$code" -eq 0 ] && printf '%s' "$out" | grep -qF "OK"; then
+  printf 'PASS  %s (exit %s)\n' "awk-assignment-path" "$code"
+  pass=$((pass + 1))
+else
+  printf 'FAIL  %s — expected exit 0 + "OK", got exit %s:\n%s\n' "awk-assignment-path" "$code" "$out"
+  fail=$((fail + 1))
+fi
 assert_code "usage-noargs"  64
 assert_code "usage-missing" 64 "$FIX/sc-spec-full.md" "$FIX/does-not-exist.md"
 
