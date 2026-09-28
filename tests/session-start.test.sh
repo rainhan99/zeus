@@ -18,6 +18,12 @@ trap 'rm -rf "$FIX"' EXIT
 mkdir -p "$FIX/.zeus/state"
 : > "$FIX/.zeus/state/quick-fix-active"      # plant a stale marker
 : > "$FIX/.zeus/state/spec-approved"          # plant (should also be cleared)
+# Fail loudly if the fixture could not be built: the deletion assertions below
+# would otherwise pass vacuously when the markers were never planted.
+if [ -z "$FIX" ] || [ ! -e "$FIX/.zeus/state/quick-fix-active" ] || [ ! -e "$FIX/.zeus/state/spec-approved" ]; then
+  echo "FAIL  fixture setup: could not plant markers under '$FIX'"
+  exit 1
+fi
 
 # Run hook with cwd in stdin, CLAUDE_PROJECT_DIR unset. If the hook resolves
 # PROJECT to "." (the bug), it cleans the wrong dir and the planted markers survive.
