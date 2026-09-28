@@ -60,7 +60,7 @@ n_ex="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*- \*\*EX-[0-9]+\*\* —
 n_exlike="$(printf '%s\n' "$region" | grep -cE '^[[:blank:]]*([-*+]|[0-9]+[.)])[[:blank:]](.*[^[:alnum:]])?EX-[0-9]|^[[:blank:]]*\*\*EX-[0-9]' || true)"
 
 if [ "$n_exlike" -gt "$n_ex" ]; then
-  printf 'MALFORMED: %s EX-looking line(s) fail the grammar in %s (need: - **EX-n** — exempts EC-k — scope: ... — reason: ...)\n' \
+  printf 'MALFORMED: %s EX-looking line(s) fail the grammar in %s (need: - **EX-n** — exempts EC-k — scope: ... — reason: ...; scope and reason must be non-blank)\n' \
     "$((n_exlike - n_ex))" "$spec"
   exit 1
 fi
