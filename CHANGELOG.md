@@ -35,17 +35,18 @@ messages — this CHANGELOG starts at v0.11.1.
   region-scoping decoys, prose lines (bold EX-IDs included), bullet `(none)`,
   CRLF and tab-indented declarations, `(none)` beside a bare, numbered (`1.` /
   `1)`), `*`-bullet, indented, or malformed bullet record, a list item
-  containing `INDEX-2`, whitespace-only scope or reason fields, fields whose
-  text follows extra blanks, and an input path shaped like an awk assignment.
-  32 probes add usage errors (an extra argument, a directory, an unreadable
-  file; the last is skipped as root), heading and region edges, the `(none)`
-  line, record tokens (two-digit EX-IDs, the EC-1..EC-8 range, the first two
-  em-dashes, `exempts`, the field labels, bold around the EX-ID), and which
-  lines beside `(none)` count as record-shaped. Fixtures whose meaning depends
-  on CR, tab, or blank bytes are checked for those bytes before use; probe
-  specs are written byte-exact at runtime. Only record-shaped lines — a list
-  item naming an EX-ID, or a line opening with a bold `**EX-<n>**` — must be
-  well-formed records.
+  containing `INDEX-2`, space-only scope or reason fields, fields whose text
+  follows extra spaces, and an input path shaped like an awk assignment. 32
+  probes add usage errors (an extra argument, a directory, an unreadable file;
+  the last is skipped where a mode-000 file stays readable, as for root),
+  heading and region edges, the `(none)` line, a record that does not open its
+  line, record tokens (a two-digit EX-ID is accepted; EC-0 and EC-9, a missing
+  first or second em-dash, a missing `exempts`, a wrong field label, and an
+  unbolded EX-ID are rejected), and which lines beside `(none)` count as
+  record-shaped. Fixtures whose meaning depends on CR, tab, or blank bytes are
+  checked for those bytes before use; probe specs are written byte-exact at
+  runtime. Only record-shaped lines — a list item naming an EX-ID, or a line
+  opening with a bold `**EX-<n>**` — must be well-formed records.
 - Code-review template gains a `{CONSTRAINT_EXEMPTIONS}` input and an
   **Engineering Constraints audit block** — an observed deviation with no
   matching exemption record is an Important finding.
