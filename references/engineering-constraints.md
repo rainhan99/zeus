@@ -98,8 +98,9 @@ mutually exclusive. `scripts/check-constraint-exemptions.sh <spec>` mechanically
 enforces this grammar (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage).
 
 The subsection heading must be spelled exactly `### Constraint Exemptions`
-(level-3, exact casing, no trailing decoration) — the checker matches it
-literally. A leading `- ` before `(none)`, leading spaces or tabs, trailing blanks,
+(level-3, exact casing, no trailing decoration) — the checker matches its words
+literally, and tolerates one or more blanks after `###` and trailing blanks. A
+leading `- ` before `(none)`, leading spaces or tabs, trailing blanks,
 and CRLF line endings are tolerated. A line that looks like a record — a list item
 (bullet or number) naming an EX-ID, or a line opening with a bold `**EX-<n>**` —
 must be a fully well-formed record; other prose inside the subsection may mention

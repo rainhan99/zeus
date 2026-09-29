@@ -23,7 +23,8 @@
 #     is treated as real. Meta-specs quoting the grammar should keep examples
 #     outside the subsection.
 #   - EX-ID uniqueness ("never reused") is normative prose, not checked here.
-#   - the heading must be spelled exactly '### Constraint Exemptions'.
+#   - the heading must be spelled exactly '### Constraint Exemptions' (blanks
+#     after '###' and trailing blanks are tolerated).
 #   - the parent section is not verified; the subsection belongs under
 #     '## Architecture / Context dependencies' (references/engineering-constraints.md).
 # NOTE: set -u (not set -e) — grep -c returning 1 on zero matches is a valid
