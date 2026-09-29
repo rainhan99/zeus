@@ -14,10 +14,17 @@ check() { # <name> <condition-exit> ; reads $? via caller
 }
 
 FIX="$(mktemp -d)"
+[ -n "$FIX" ] && [ -d "$FIX" ] || { echo "FAIL  fixture setup: mktemp -d failed"; exit 1; }
 trap 'rm -rf "$FIX"' EXIT
 mkdir -p "$FIX/.zeus/state"
 : > "$FIX/.zeus/state/quick-fix-active"      # plant a stale marker
 : > "$FIX/.zeus/state/spec-approved"          # plant (should also be cleared)
+# Fail loudly if the markers were not planted: the deletion assertions below
+# would otherwise pass vacuously.
+if [ ! -e "$FIX/.zeus/state/quick-fix-active" ] || [ ! -e "$FIX/.zeus/state/spec-approved" ]; then
+  echo "FAIL  fixture setup: could not plant markers under '$FIX'"
+  exit 1
+fi
 
 # Run hook with cwd in stdin, CLAUDE_PROJECT_DIR unset. If the hook resolves
 # PROJECT to "." (the bug), it cleans the wrong dir and the planted markers survive.

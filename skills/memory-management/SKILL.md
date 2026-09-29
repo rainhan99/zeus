@@ -206,5 +206,6 @@ Why: custom scripts diverge from community standards and miss edge cases that ma
 - **Called by:** any skill that receives user corrections (the instant-capture flow).
 - **Predecessor:** none — this is the foundation skill for SP6.
 - **Successor:** `session-init` (loads memory), `session-handoff` (writes handoff memory).
+- **References:** `references/project-contract.md` — the project root and contract precedence that every `.zeus/` path is relative to.
 - **Gatesessed:** supports G7 indirectly by providing the storage layer for handoff memos.
 - **Defends layer:** 5 (state management).

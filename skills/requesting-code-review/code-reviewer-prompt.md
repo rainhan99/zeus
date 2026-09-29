@@ -39,6 +39,13 @@ Task tool (code-reviewer or general-purpose):
     | Config / Routing / Type defs   | (relaxed)      |
     | Test files                     | (relaxed)      |
 
+    ## Engineering Constraints (zeus defaults)
+
+    EC-1..EC-8 defaults apply (full text: references/engineering-constraints.md).
+    Declared exemptions for this work:
+
+    {CONSTRAINT_EXEMPTIONS}
+
     ## Review Checklist
 
     **Code Quality:**
@@ -77,9 +84,19 @@ Task tool (code-reviewer or general-purpose):
     - Do new/modified files stay within the project's file-size conventions?
     - Don't flag pre-existing file sizes — focus on what this change contributed.
 
+    **Engineering Constraints (EC-1..EC-8):**
+    - Any compatibility layer, migration shim, or fallback kept (EC-1)?
+    - Any speculative abstraction or config layer beyond current needs (EC-2)?
+    - Any new dependency, or hand-rolled code a maintained library covers (EC-5/EC-6)?
+    - Any "temporary for now, replace later" design (EC-7)?
+    - Every hit MUST map to a declared exemption above (EX-N or standing contract
+      exemption) — an unmatched hit is an Important finding.
+
     **Production Readiness:**
-    - Migration strategy (if schema changes)?
-    - Backward compatibility considered?
+    - Migration strategy (if schema changes): one-way, moving existing data to the new
+      shape and deleting the old path (EC-1)? A migration that keeps the old shape
+      usable (dual read/write, shim, rollback path) needs a declared exemption.
+    - Backward compatibility deliberately dropped unless a declared exemption keeps it (EC-1)?
     - No obvious bugs?
 
     ## IMPORTANT: Codebase-Wide Pattern Check

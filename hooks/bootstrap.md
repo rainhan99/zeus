@@ -50,4 +50,23 @@ For ALL development tasks — whether full-process or quick-fix, regardless of t
 
 Never auto-select. The user always decides. Print a one-line hint about what you'd recommend and why, but present both options.
 
+## Engineering Constraints (zeus defaults)
+
+Default-on for ALL development work — full-process, quick-fix, and ad-hoc edits alike.
+Exemptions require an explicit developer declaration: standing ones in the project
+contract's `## Engineering Constraints` section, per-feature ones as `EX-N` records in
+the spec's `### Constraint Exemptions` subsection (a spoken exemption counts only once
+transcribed there). Precedence: project contract > spec EX record > default. An
+undeclared deviation is a review finding. Full text + protocol: zeus
+`references/engineering-constraints.md`.
+
+- **EC-1** No backward compatibility: delete obsolete code outright — no compat layers, no fallbacks, no migration that keeps the old shape usable (a one-way migration that deletes the old path is fine).
+- **EC-2** Simplest implementation that meets current needs — no preventive abstraction, no gratuitous config layers.
+- **EC-3** Grow in layers: minimal end-to-end version first; never dismantle working code for unfinished complexity.
+- **EC-4** Keep components modular; separate concerns.
+- **EC-5** Prefer mature, maintained libraries; no hand-rolling without a recorded reason.
+- **EC-6** Check what existing dependencies already provide before adding packages or writing custom code.
+- **EC-7** Architecture decisions are long-term; no "temporary now, replace later" designs.
+- **EC-8** Adopt proven patterns from mature products; don't invent from scratch.
+
 All zeus skills: `zeus:<skill-name>`. Full reference: invoke `zeus:using-zeus`.

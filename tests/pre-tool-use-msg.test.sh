@@ -10,8 +10,16 @@ HOOK="$ROOT/hooks/pre-tool-use.sh"
 pass=0; fail=0
 check() { if [ "$1" -eq 0 ]; then printf 'PASS  %s\n' "$2"; pass=$((pass+1)); else printf 'FAIL  %s\n' "$2"; fail=$((fail+1)); fi; }
 
-FIX="$(mktemp -d)"; trap 'rm -rf "$FIX"' EXIT
+FIX="$(mktemp -d)"
+[ -n "$FIX" ] && [ -d "$FIX" ] || { echo "FAIL  fixture setup: mktemp -d failed"; exit 1; }
+trap 'rm -rf "$FIX"' EXIT
 mkdir -p "$FIX/.zeus/state"
+# Fail loudly if the fixture could not be built, instead of reporting hook
+# failures that are really setup failures.
+if [ ! -d "$FIX/.zeus/state" ]; then
+  echo "FAIL  fixture setup: could not create '$FIX/.zeus/state'"
+  exit 1
+fi
 payload() { printf '{"cwd":"%s","tool_input":{"file_path":"%s/foo.ts"}}' "$FIX" "$FIX"; }
 
 # 1. No markers → blocked (exit 2) with actionable /quick-fix message on stderr.

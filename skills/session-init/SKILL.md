@@ -122,7 +122,7 @@ These are not suggestions. They are corrections the user has already made. Viola
 ## Verification checklist
 
 - [ ] Project contract read per `references/project-contract.md` (CLAUDE.md or AGENTS.md selected by the precedence chain), or absence noted with suggestion to create.
-- [ ] Selected contract's sections (Tech Stack, Commands, Conventions, DoD, Invariants) extracted; missing sections noted for downstream skills.
+- [ ] Selected contract's sections (Tech Stack, Conventions, Engineering Constraints, Commands, DoD, Invariants) extracted; missing sections noted for downstream skills.
 - [ ] `.zeus/features.md` read if present.
 - [ ] `.zeus/memory/` exists (created if first session).
 - [ ] All lessons loaded in full.

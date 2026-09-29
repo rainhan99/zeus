@@ -69,6 +69,7 @@ Output: plan → your approval → Phase 3 (Execution)
    - **Restate**: "I read this as: <verbatim rephrasing>"
    - **Risk**: "Risk: <potential edge case / anti-pattern / coupling / complexity>"
    - **Question**: "Question: <unresolved ambiguity for the user>"
+   - **Constraint audit**: check the requirement against EC-1..EC-8 (`references/engineering-constraints.md`) — flag any implied compatibility layer (EC-1), new dependency or hand-rolled substitute (EC-5/EC-6), or transitional design (EC-7); every flag needs a spec `EX-N` record or a redesign.
 4. Combine outputs into the plan's "Architect Risk Analysis" section.
 5. The user must confirm this section before Phase 2.
 
@@ -105,6 +106,7 @@ Output: plan → your approval → Phase 3 (Execution)
      |---|---|---|---|
 
      Every `SC-N` from the spec's `### Scope Checklist` MUST appear here mapped to ≥1 task, OR be logged below as an authorized simplification. An unmapped `SC-N` is an orphan — the feature would ship missing.
+   - **Constraint Exemptions carry-forward** — restate the spec's `### Constraint Exemptions` verbatim in this section. Every `EX-N` binds execution: tasks must not "fix" an exempted deviation, and any new dependency or transitional design a task introduces must trace to an `EX-N` (or a standing contract exemption) — otherwise redesign the task.
    - If user authorizes simplification, 4-field block per item:
      - Simplification: <what>
      - Reason: <why user authorized>
@@ -225,6 +227,6 @@ For stacks not in the table, generate the equivalent checklist at runtime: "what
 
 - **Predecessor:** `zeus:brainstorming` (spec must exist) or `zeus:kickoff-feature-list` (.zeus/features.md must exist).
 - **Successor:** SP4's `zeus:executing-plans` or `zeus:subagent-driven-development` (forward references; not yet landed).
-- **References:** `references/karpathy-principles.md` — Simplicity First and Surgical Changes apply to every plan task this skill produces.
+- **References:** `references/engineering-constraints.md` — EC-1..EC-8 and Diff discipline apply to every plan task this skill produces.
 - **Gates addressed:** G4 (DoD delta + Logic Completeness Manifest are the contract execution-time gates enforce).
 - **Defends layer:** 1 (task spec) and 4 (verification feedback).
