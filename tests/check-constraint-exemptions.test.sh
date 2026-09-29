@@ -119,7 +119,7 @@ assert "two-args"      64 "usage" "$FIX/ex-spec-none.md" "$FIX/ex-spec-none.md"
 assert "directory-arg" 64 "usage" "$PROBE"
 printf 'x\n' > "$PROBE/unreadable.md"; chmod 000 "$PROBE/unreadable.md"
 if [ -r "$PROBE/unreadable.md" ]; then
-  echo "SKIP  unreadable-arg (running as root: mode 000 stays readable)"
+  echo "SKIP  unreadable-arg (a mode-000 file stays readable here, as for root)"
 else
   assert "unreadable-arg" 64 "usage" "$PROBE/unreadable.md"
 fi
