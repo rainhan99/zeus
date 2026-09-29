@@ -31,7 +31,7 @@ messages — this CHANGELOG starts at v0.11.1.
   subsection (exit 0 well-formed / 1 missing-malformed-mixed / 64 usage),
   wired into `e2e-gate` (second G5 entry-condition) and
   `verification-before-completion`. 61-assert harness
-  (`tests/check-constraint-exemptions.test.sh`) + 26 fixtures pin the grammar:
+  (`tests/check-constraint-exemptions.test.sh`) + 26 fixtures pin these cases:
   region-scoping decoys, prose lines (bold EX-IDs included), bullet `(none)`,
   CRLF and tab-indented declarations, `(none)` beside a bare, numbered (`1.` /
   `1)`), `*`-bullet, indented, or malformed bullet record, a list item
